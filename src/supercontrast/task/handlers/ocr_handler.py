@@ -2,10 +2,11 @@ from pydantic import BaseModel
 from typing import List, Optional, Union
 
 from supercontrast.optimizer.optimizer import OptimizerFunction
-from supercontrast.providers import Provider, provider_factory
-from supercontrast.tasks.task_enum import Task
-from supercontrast.tasks.task_handler import TaskHandler
-from supercontrast.tasks.types.ocr_types import OCRRequest, OCRResponse
+from supercontrast.provider import Provider
+from supercontrast.provider.provider_factory import provider_factory
+from supercontrast.task.task_enum import Task
+from supercontrast.task.task_handler import TaskHandler
+from supercontrast.task.types.ocr_types import OCRRequest, OCRResponse
 
 
 class OCRHandler(TaskHandler):

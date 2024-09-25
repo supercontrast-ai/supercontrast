@@ -1,6 +1,6 @@
 from supercontrast.client import supercontrast_client
-from supercontrast.providers import Provider
-from supercontrast.tasks import (
+from supercontrast.provider import Provider
+from supercontrast.task import (
     OCRRequest,
     SentimentAnalysisRequest,
     Task,

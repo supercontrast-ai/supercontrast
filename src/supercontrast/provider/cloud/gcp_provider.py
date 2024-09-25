@@ -2,8 +2,8 @@ import os
 
 from google.cloud import language_v1, translate_v2, vision_v1
 
-from supercontrast.providers.provider_model import ProviderModel
-from supercontrast.tasks import (
+from supercontrast.provider.provider_model import ProviderModel
+from supercontrast.task import (
     OCRRequest,
     OCRResponse,
     SentimentAnalysisRequest,

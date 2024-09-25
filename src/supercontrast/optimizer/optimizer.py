@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from supercontrast.providers import Provider, ProviderModel
+from supercontrast.provider import Provider, ProviderModel
 
 
 class OptimizerFunction(ABC):

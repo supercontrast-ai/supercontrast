@@ -9,8 +9,8 @@ from azure.cognitiveservices.vision.computervision.models import OperationStatus
 from azure.core.credentials import AzureKeyCredential
 from msrest.authentication import CognitiveServicesCredentials
 
-from supercontrast.providers.provider_model import ProviderModel
-from supercontrast.tasks import (
+from supercontrast.provider.provider_model import ProviderModel
+from supercontrast.task import (
     OCRRequest,
     OCRResponse,
     SentimentAnalysisRequest,

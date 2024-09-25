@@ -2,7 +2,7 @@ from abc import ABC
 from typing import List, Optional
 
 from supercontrast.optimizer.optimizer import Optimizer, OptimizerFunction
-from supercontrast.providers import Provider, ProviderModel
+from supercontrast.provider import Provider, ProviderModel
 
 
 class TaskHandler(ABC):

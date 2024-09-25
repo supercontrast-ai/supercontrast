@@ -1,7 +1,7 @@
 import boto3
 
-from supercontrast.providers.provider_model import ProviderModel
-from supercontrast.tasks import (
+from supercontrast.provider.provider_model import ProviderModel
+from supercontrast.task import (
     OCRRequest,
     OCRResponse,
     SentimentAnalysisRequest,

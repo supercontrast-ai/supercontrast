@@ -1,19 +1,9 @@
 from typing import List, Optional
 
 from supercontrast.optimizer.optimizer import OptimizerFunction
-from supercontrast.providers import Provider
-from supercontrast.tasks import Task
-from supercontrast.tasks.handlers import (
-    OCRHandler,
-    SentimentAnalysisHandler,
-    TranslationHandler,
-)
-
-HANDLER_MAP = {
-    Task.SENTIMENT_ANALYSIS: SentimentAnalysisHandler,
-    Task.TRANSLATION: TranslationHandler,
-    Task.OCR: OCRHandler,
-}
+from supercontrast.provider import Provider
+from supercontrast.task import Task
+from supercontrast.task.task_factory import task_factory
 
 
 def supercontrast_client(
@@ -22,5 +12,5 @@ def supercontrast_client(
     optimize_by: Optional[OptimizerFunction] = None,
     **config
 ):
-    handler_cls = HANDLER_MAP[task]
-    return handler_cls(providers, optimize_by, **config)
+    task_handler = task_factory(task, providers, optimize_by, **config)
+    return task_handler

@@ -1,0 +1,10 @@
+[tool.pytest.ini_options]
+minversion = "6.2.5"
+addopts = "-ra -q"
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.isort]
+profile = "black"
+lines_between_types = 1
+sections = ["THIRDPARTY", "FIRSTPARTY"]

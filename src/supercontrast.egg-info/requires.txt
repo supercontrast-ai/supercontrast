@@ -1,0 +1,14 @@
+boto3
+azure-ai-textanalytics
+google-cloud-language
+google-api-python-client
+google-auth-oauthlib
+google-auth-httplib2
+google-auth
+google-api-core
+google-cloud-vision
+google-cloud-translate
+google-cloud-speech
+google-cloud-language
+google-cloud-translate
+google-cloud-vision

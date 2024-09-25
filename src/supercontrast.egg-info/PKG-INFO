@@ -1,0 +1,28 @@
+Metadata-Version: 2.1
+Name: supercontrast
+Version: 0.1.0
+Summary: A package for supercontrast functionality
+Home-page: https://github.com/yourusername/supercontrast
+Author: SuperContrast Founders
+Author-email: founders@supercontrast.com
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: boto3
+Requires-Dist: azure-ai-textanalytics
+Requires-Dist: google-cloud-language
+Requires-Dist: google-api-python-client
+Requires-Dist: google-auth-oauthlib
+Requires-Dist: google-auth-httplib2
+Requires-Dist: google-auth
+Requires-Dist: google-api-core
+Requires-Dist: google-cloud-vision
+Requires-Dist: google-cloud-translate
+Requires-Dist: google-cloud-speech
+Requires-Dist: google-cloud-language
+Requires-Dist: google-cloud-translate
+Requires-Dist: google-cloud-vision
+
+# SuperContrast

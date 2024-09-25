@@ -11,7 +11,9 @@ class OptimizerFunction(ABC):
 
 
 class Optimizer(ABC):
-    def __init__(self, optimizer_function: OptimizerFunction, providers: List[ProviderType]):
+    def __init__(
+        self, optimizer_function: OptimizerFunction, providers: List[ProviderType]
+    ):
         self.optimizer_function = optimizer_function
         self.providers = providers
 

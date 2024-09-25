@@ -1,3 +1,4 @@
+pyproject.toml
 setup.py
 src/supercontrast/__init__.py
 src/supercontrast/client.py
@@ -19,4 +20,5 @@ src/supercontrast/tasks/__init__.py
 src/supercontrast/tasks/ocr.py
 src/supercontrast/tasks/sentiment_analysis.py
 src/supercontrast/tasks/task_handler.py
+src/supercontrast/tasks/task_types.py
 src/supercontrast/tasks/translation.py

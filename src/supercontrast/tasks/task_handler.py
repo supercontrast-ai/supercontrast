@@ -1,21 +1,27 @@
 from abc import ABC
 from typing import List, Optional
 
-from supercontrast.providers.provider import Provider, ProviderType
 from supercontrast.optimizer.optimizer import Optimizer, OptimizerFunction
+from supercontrast.providers.provider import Provider, ProviderType
 
 
 class TaskHandler(ABC):
-    def __init__(self, providers: List[ProviderType], optimize_by: Optional[OptimizerFunction] = None):
+    def __init__(
+        self,
+        providers: List[ProviderType],
+        optimize_by: Optional[OptimizerFunction] = None,
+    ):
         if len(providers) > 1 and optimize_by == None:
-            raise ValueError("Optimizer function must be provided if more than one provider is used")
-        
+            raise ValueError(
+                "Optimizer function must be provided if more than one provider is used"
+            )
+
         if optimize_by != None:
             self.optimizer = Optimizer(optimize_by, providers)
             self.optimizer.watch()
         else:
             self.optimizer = None
-        
+
         self.provider_connections = {}
 
     def _get_provider(self) -> Provider:

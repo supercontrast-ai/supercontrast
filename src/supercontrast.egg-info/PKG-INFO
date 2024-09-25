@@ -12,6 +12,10 @@ Requires-Python: >=3.10
 Description-Content-Type: text/markdown
 Requires-Dist: boto3
 Requires-Dist: azure-ai-textanalytics
+Requires-Dist: azure-cognitiveservices-vision-computervision
+Requires-Dist: azure-ai-translation-text
+Requires-Dist: azure-core
+Requires-Dist: msrest
 Requires-Dist: google-cloud-language
 Requires-Dist: google-api-python-client
 Requires-Dist: google-auth-oauthlib
@@ -24,5 +28,6 @@ Requires-Dist: google-cloud-speech
 Requires-Dist: google-cloud-language
 Requires-Dist: google-cloud-translate
 Requires-Dist: google-cloud-vision
+Requires-Dist: pydantic
 
 # SuperContrast

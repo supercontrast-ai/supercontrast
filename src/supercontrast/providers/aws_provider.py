@@ -2,7 +2,10 @@ import boto3
 
 from supercontrast.providers.provider import Provider
 from supercontrast.tasks.ocr import OCRRequest, OCRResponse
-from supercontrast.tasks.sentiment_analysis import SentimentAnalysisRequest, SentimentAnalysisResponse
+from supercontrast.tasks.sentiment_analysis import (
+    SentimentAnalysisRequest,
+    SentimentAnalysisResponse,
+)
 from supercontrast.tasks.translation import TranslationRequest, TranslationResponse
 
 
@@ -19,8 +22,7 @@ class AWSSentimentAnalysis(Provider):
 
     def request(self, request: SentimentAnalysisRequest) -> SentimentAnalysisResponse:
         response = self.client.detect_sentiment(
-            Text=truncate_text(request.text), 
-            LanguageCode="en"
+            Text=truncate_text(request.text), LanguageCode="en"
         )
         score = (
             response["SentimentScore"]["Positive"]
@@ -49,7 +51,7 @@ class AWSTranslate(Provider):
             Text=truncate_text(request.text),
         )
         translated_text = response["TranslatedText"]
-        
+
         result = TranslationResponse(
             text=translated_text,
         )
@@ -60,7 +62,9 @@ class AWSTranslate(Provider):
         return "AWS Translate"
 
     @classmethod
-    def init_from_env(cls, source_language: str, target_language: str) -> "AWSTranslate":
+    def init_from_env(
+        cls, source_language: str, target_language: str
+    ) -> "AWSTranslate":
         return cls(source_language, target_language)
 
 
@@ -77,15 +81,14 @@ class AWSOCR(Provider):
             image_data = request.image
 
         response = self.client.analyze_document(
-            Document={"Bytes": image_data},
-            FeatureTypes=["FORMS", "TABLES"]
+            Document={"Bytes": image_data}, FeatureTypes=["FORMS", "TABLES"]
         )
-        
+
         extracted_text = ""
-        for item in response.get('Blocks', []):
-            if item['BlockType'] == 'LINE':
-                extracted_text += item['Text'] + "\n"
-        
+        for item in response.get("Blocks", []):
+            if item["BlockType"] == "LINE":
+                extracted_text += item["Text"] + "\n"
+
         return OCRResponse(text=extracted_text.strip())
 
     def get_name(self) -> str:

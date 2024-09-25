@@ -4,7 +4,10 @@ from google.cloud import language_v1, translate_v2, vision_v1
 
 from supercontrast.providers.provider import Provider
 from supercontrast.tasks.ocr import OCRRequest, OCRResponse
-from supercontrast.tasks.sentiment_analysis import SentimentAnalysisRequest, SentimentAnalysisResponse
+from supercontrast.tasks.sentiment_analysis import (
+    SentimentAnalysisRequest,
+    SentimentAnalysisResponse,
+)
 from supercontrast.tasks.translation import TranslationRequest, TranslationResponse
 
 
@@ -12,9 +15,7 @@ class GCPSentimentAnalysis(Provider):
     def __init__(self, api_key: str):
         super().__init__()
         self.client = language_v1.LanguageServiceClient(
-            client_options={
-                "api_key": api_key
-            }
+            client_options={"api_key": api_key}
         )
         self.THRESHOLD = 0
 
@@ -46,11 +47,7 @@ class GCPSentimentAnalysis(Provider):
 class GCPTranslation(Provider):
     def __init__(self, api_key: str, src_language: str, target_language: str):
         super().__init__()
-        self.client = translate_v2.Client(
-            client_options={
-                "api_key": api_key
-            }
-        )
+        self.client = translate_v2.Client(client_options={"api_key": api_key})
         self.src_language = src_language
         self.target_language = target_language
 
@@ -59,14 +56,16 @@ class GCPTranslation(Provider):
             request.text,
         )
         translated_text = result["translatedText"]
-        
+
         return TranslationResponse(text=translated_text)
 
     def get_name(self) -> str:
         return "Google Translation"
 
     @classmethod
-    def init_from_env(cls, source_language: str, target_language: str) -> "GCPTranslation":
+    def init_from_env(
+        cls, source_language: str, target_language: str
+    ) -> "GCPTranslation":
         api_key = os.environ.get("GCP_API_KEY")
         if not api_key:
             raise ValueError(
@@ -79,9 +78,7 @@ class GCPOCR(Provider):
     def __init__(self, api_key: str):
         super().__init__()
         self.client = vision_v1.ImageAnnotatorClient(
-            client_options={
-                "api_key": api_key
-            }
+            client_options={"api_key": api_key}
         )
 
     def request(self, request: OCRRequest) -> OCRResponse:
@@ -93,9 +90,9 @@ class GCPOCR(Provider):
 
         image = vision_v1.Image(content=content)
         response = self.client.document_text_detection(image=image)
-        
+
         extracted_text = response.full_text_annotation.text
-        
+
         return OCRResponse(text=extracted_text.strip())
 
     def get_name(self) -> str:

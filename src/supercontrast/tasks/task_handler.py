@@ -2,13 +2,13 @@ from abc import ABC
 from typing import List, Optional
 
 from supercontrast.optimizer.optimizer import Optimizer, OptimizerFunction
-from supercontrast.providers.provider import Provider, ProviderType
+from supercontrast.providers import Provider, ProviderModel
 
 
 class TaskHandler(ABC):
     def __init__(
         self,
-        providers: List[ProviderType],
+        providers: List[Provider],
         optimize_by: Optional[OptimizerFunction] = None,
     ):
         if len(providers) > 1 and optimize_by == None:
@@ -24,7 +24,7 @@ class TaskHandler(ABC):
 
         self.provider_connections = {}
 
-    def _get_provider(self) -> Provider:
+    def _get_provider(self) -> ProviderModel:
         if self.optimizer:
             provider_value = self.optimizer()
             connection = self.provider_connections.get(provider_value)

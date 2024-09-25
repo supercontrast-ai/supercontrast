@@ -1,7 +1,6 @@
 from supercontrast.client import supercontrast_client
-from supercontrast.providers.provider import ProviderType
-from supercontrast.tasks.sentiment_analysis import SentimentAnalysisRequest
-from supercontrast.tasks.task_types import Task
+from supercontrast.providers import Provider
+from supercontrast.tasks import SentimentAnalysisRequest, Task
 
 # helper functions
 
@@ -20,7 +19,7 @@ def print_request_and_response(request, response):
 
 def test_sentiment_analysis_aws():
     sentiment_analysis_aws_client = supercontrast_client(
-        task=Task.SENTIMENT_ANALYSIS, providers=[ProviderType.AWS]
+        task=Task.SENTIMENT_ANALYSIS, providers=[Provider.AWS]
     )
     request = SentimentAnalysisRequest(text="I love programming in Python!")
     response = sentiment_analysis_aws_client.request(request)

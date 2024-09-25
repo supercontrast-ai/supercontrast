@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from supercontrast.providers.provider import Provider, ProviderType
+from supercontrast.providers import Provider, ProviderModel
 
 
 class OptimizerFunction(ABC):
@@ -12,7 +12,7 @@ class OptimizerFunction(ABC):
 
 class Optimizer(ABC):
     def __init__(
-        self, optimizer_function: OptimizerFunction, providers: List[ProviderType]
+        self, optimizer_function: OptimizerFunction, providers: List[Provider]
     ):
         self.optimizer_function = optimizer_function
         self.providers = providers
@@ -20,5 +20,5 @@ class Optimizer(ABC):
     def watch(self):
         pass
 
-    def __call__(self) -> ProviderType:
+    def __call__(self) -> ProviderModel:
         raise NotImplementedError("Subclass must implement abstract method")

@@ -9,16 +9,21 @@ from azure.cognitiveservices.vision.computervision.models import OperationStatus
 from azure.core.credentials import AzureKeyCredential
 from msrest.authentication import CognitiveServicesCredentials
 
-from supercontrast.providers.provider import Provider
-from supercontrast.tasks.ocr import OCRRequest, OCRResponse
-from supercontrast.tasks.sentiment_analysis import (
+from supercontrast.providers.provider_model import ProviderModel
+from supercontrast.tasks import (
+    OCRRequest,
+    OCRResponse,
     SentimentAnalysisRequest,
     SentimentAnalysisResponse,
+    Task,
+    TranslationRequest,
+    TranslationResponse,
 )
-from supercontrast.tasks.translation import TranslationRequest, TranslationResponse
+
+# models
 
 
-class AzureSentimentAnalysis(Provider):
+class AzureSentimentAnalysis(ProviderModel):
     def __init__(self, endpoint: str, key: str):
         super().__init__()
         self.client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
@@ -45,7 +50,7 @@ class AzureSentimentAnalysis(Provider):
         return cls(endpoint, key)
 
 
-class AzureTranslation(Provider):
+class AzureTranslation(ProviderModel):
     def __init__(
         self, key: str, region: str, source_language: str, target_language: str
     ):
@@ -82,7 +87,7 @@ class AzureTranslation(Provider):
         return cls(key, region, source_language, target_language)
 
 
-class AzureOCR(Provider):
+class AzureOCR(ProviderModel):
     def __init__(self, endpoint: str, key: str):
         super().__init__()
         self.client = ComputerVisionClient(endpoint, CognitiveServicesCredentials(key))
@@ -108,14 +113,14 @@ class AzureOCR(Provider):
         while True:
             read_result = self.client.get_read_result(operation_id)
 
-            if read_result.status not in ["notStarted", "running"]:
+            if read_result.status not in ["notStarted", "running"]:  # type: ignore
                 break
             time.sleep(1)
 
         extracted_text = ""
 
-        if read_result.status == OperationStatusCodes.succeeded:
-            for text_result in read_result.analyze_result.read_results:
+        if read_result.status == OperationStatusCodes.succeeded:  # type: ignore
+            for text_result in read_result.analyze_result.read_results:  # type: ignore
                 for line in text_result.lines:
                     extracted_text += line.text + "\n"
 
@@ -132,3 +137,21 @@ class AzureOCR(Provider):
             raise ValueError("AZURE_VISION_ENDPOINT and AZURE_VISION_KEY must be set")
 
         return cls(endpoint, key)
+
+
+# factory
+
+
+def azure_provider_factory(task: Task, **config) -> ProviderModel:
+    if task == Task.SENTIMENT_ANALYSIS:
+        return AzureSentimentAnalysis.init_from_env()
+    elif task == Task.TRANSLATION:
+        source_language = config.get("source_language", "en")
+        target_language = config.get("target_language", "es")
+        return AzureTranslation.init_from_env(
+            source_language=source_language, target_language=target_language
+        )
+    elif task == Task.OCR:
+        return AzureOCR.init_from_env()
+    else:
+        raise ValueError(f"Unsupported task: {task}")

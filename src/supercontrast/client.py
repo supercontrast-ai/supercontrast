@@ -1,11 +1,13 @@
 from typing import List, Optional
 
 from supercontrast.optimizer.optimizer import OptimizerFunction
-from supercontrast.providers.provider import Provider, ProviderType
-from supercontrast.tasks.ocr import OCRHandler
-from supercontrast.tasks.sentiment_analysis import SentimentAnalysisHandler
-from supercontrast.tasks.task_types import Task
-from supercontrast.tasks.translation import TranslationHandler
+from supercontrast.providers import Provider
+from supercontrast.tasks import Task
+from supercontrast.tasks.handlers import (
+    OCRHandler,
+    SentimentAnalysisHandler,
+    TranslationHandler,
+)
 
 HANDLER_MAP = {
     Task.SENTIMENT_ANALYSIS: SentimentAnalysisHandler,
@@ -16,7 +18,7 @@ HANDLER_MAP = {
 
 def supercontrast_client(
     task: Task,
-    providers: List[ProviderType],
+    providers: List[Provider],
     optimize_by: Optional[OptimizerFunction] = None,
     **config
 ):

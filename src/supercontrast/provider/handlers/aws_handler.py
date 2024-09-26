@@ -1,5 +1,6 @@
 import boto3
 
+from supercontrast.metrics.decorators import track_latency
 from supercontrast.provider.provider_handler import ProviderHandler
 from supercontrast.task import (
     OCRRequest,
@@ -21,6 +22,7 @@ class AWSSentimentAnalysis(ProviderHandler):
         self.client = boto3.client("comprehend")
         self.THRESHOLD = 0
 
+    @track_latency
     def request(self, request: SentimentAnalysisRequest) -> SentimentAnalysisResponse:
         response = self.client.detect_sentiment(
             Text=truncate_text(request.text), LanguageCode="en"

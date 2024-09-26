@@ -20,11 +20,11 @@ class SentimentAnalysisHandler(TaskHandler):
     ):
         self.task = Task.SENTIMENT_ANALYSIS
         self.provider_handler_map = {
-            provider: provider_factory(task=Task.OCR, provider=provider)
+            provider: provider_factory(task=Task.SENTIMENT_ANALYSIS, provider=provider)
             for provider in providers
         }
         self.optimizer_handler = optimizer_factory(
-            task=Task.OCR, providers=providers, optimizer=optimizer
+            task=Task.SENTIMENT_ANALYSIS, providers=providers, optimizer=optimizer
         )
 
     def request(self, body: SentimentAnalysisRequest) -> SentimentAnalysisResponse:

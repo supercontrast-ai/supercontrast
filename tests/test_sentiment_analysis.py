@@ -1,6 +1,9 @@
 from supercontrast.client import supercontrast_client
 from supercontrast.provider import Provider
 from supercontrast.task import SentimentAnalysisRequest, Task
+from supercontrast.task.handlers.sentiment_analysis_handler import (
+    SentimentAnalysisHandler,
+)
 
 # helper functions
 

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class ProviderModel(ABC):
+class ProviderHandler(ABC):
     @abstractmethod
     def __init__(self, *args, **kwargs):
         pass

@@ -2,7 +2,7 @@ import os
 
 from google.cloud import language_v1, translate_v2, vision_v1
 
-from supercontrast.provider.provider_model import ProviderModel
+from supercontrast.provider.provider_handler import ProviderHandler
 from supercontrast.task import (
     OCRRequest,
     OCRResponse,
@@ -16,7 +16,7 @@ from supercontrast.task import (
 # models
 
 
-class GCPSentimentAnalysis(ProviderModel):
+class GCPSentimentAnalysis(ProviderHandler):
     def __init__(self, api_key: str):
         super().__init__()
         self.client = language_v1.LanguageServiceClient(
@@ -49,7 +49,7 @@ class GCPSentimentAnalysis(ProviderModel):
         return cls(api_key)
 
 
-class GCPTranslation(ProviderModel):
+class GCPTranslation(ProviderHandler):
     def __init__(self, api_key: str, src_language: str, target_language: str):
         super().__init__()
         self.client = translate_v2.Client(client_options={"api_key": api_key})
@@ -81,7 +81,7 @@ class GCPTranslation(ProviderModel):
         return cls(api_key, source_language, target_language)
 
 
-class GCPOCR(ProviderModel):
+class GCPOCR(ProviderHandler):
     def __init__(self, api_key: str):
         super().__init__()
         self.client = vision_v1.ImageAnnotatorClient(
@@ -118,7 +118,7 @@ class GCPOCR(ProviderModel):
 # factory
 
 
-def gcp_provider_factory(task: Task, **config) -> ProviderModel:
+def gcp_provider_factory(task: Task, **config) -> ProviderHandler:
     if task == Task.SENTIMENT_ANALYSIS:
         return GCPSentimentAnalysis.init_from_env()
     elif task == Task.TRANSLATION:

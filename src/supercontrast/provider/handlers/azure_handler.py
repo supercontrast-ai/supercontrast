@@ -9,7 +9,7 @@ from azure.cognitiveservices.vision.computervision.models import OperationStatus
 from azure.core.credentials import AzureKeyCredential
 from msrest.authentication import CognitiveServicesCredentials
 
-from supercontrast.provider.provider_model import ProviderModel
+from supercontrast.provider.provider_handler import ProviderHandler
 from supercontrast.task import (
     OCRRequest,
     OCRResponse,
@@ -23,7 +23,7 @@ from supercontrast.task import (
 # models
 
 
-class AzureSentimentAnalysis(ProviderModel):
+class AzureSentimentAnalysis(ProviderHandler):
     def __init__(self, endpoint: str, key: str):
         super().__init__()
         self.client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
@@ -50,7 +50,7 @@ class AzureSentimentAnalysis(ProviderModel):
         return cls(endpoint, key)
 
 
-class AzureTranslation(ProviderModel):
+class AzureTranslation(ProviderHandler):
     def __init__(
         self, key: str, region: str, source_language: str, target_language: str
     ):
@@ -87,7 +87,7 @@ class AzureTranslation(ProviderModel):
         return cls(key, region, source_language, target_language)
 
 
-class AzureOCR(ProviderModel):
+class AzureOCR(ProviderHandler):
     def __init__(self, endpoint: str, key: str):
         super().__init__()
         self.client = ComputerVisionClient(endpoint, CognitiveServicesCredentials(key))
@@ -142,7 +142,7 @@ class AzureOCR(ProviderModel):
 # factory
 
 
-def azure_provider_factory(task: Task, **config) -> ProviderModel:
+def azure_provider_factory(task: Task, **config) -> ProviderHandler:
     if task == Task.SENTIMENT_ANALYSIS:
         return AzureSentimentAnalysis.init_from_env()
     elif task == Task.TRANSLATION:

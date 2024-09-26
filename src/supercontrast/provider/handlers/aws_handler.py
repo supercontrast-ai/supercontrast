@@ -1,6 +1,6 @@
 import boto3
 
-from supercontrast.provider.provider_model import ProviderModel
+from supercontrast.provider.provider_handler import ProviderHandler
 from supercontrast.task import (
     OCRRequest,
     OCRResponse,
@@ -15,7 +15,7 @@ from supercontrast.utils.text import truncate_text
 # models
 
 
-class AWSSentimentAnalysis(ProviderModel):
+class AWSSentimentAnalysis(ProviderHandler):
     def __init__(self):
         super().__init__()
         self.client = boto3.client("comprehend")
@@ -40,7 +40,7 @@ class AWSSentimentAnalysis(ProviderModel):
         return cls()
 
 
-class AWSTranslate(ProviderModel):
+class AWSTranslate(ProviderHandler):
     def __init__(self, src_language: str, target_language: str):
         super().__init__()
         self.client = boto3.client("translate")
@@ -69,7 +69,7 @@ class AWSTranslate(ProviderModel):
         return cls(source_language, target_language)
 
 
-class AWSOCR(ProviderModel):
+class AWSOCR(ProviderHandler):
     def __init__(self):
         super().__init__()
         self.client = boto3.client("textract")
@@ -103,7 +103,7 @@ class AWSOCR(ProviderModel):
 # factory
 
 
-def aws_provider_factory(task: Task, **config) -> ProviderModel:
+def aws_provider_factory(task: Task, **config) -> ProviderHandler:
     if task == Task.SENTIMENT_ANALYSIS:
         return AWSSentimentAnalysis.init_from_env()
     elif task == Task.TRANSLATION:

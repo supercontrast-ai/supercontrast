@@ -1,6 +1,7 @@
 from typing import List, Optional
 
-from supercontrast.optimizer.optimizer import OptimizerFunction
+from supercontrast.optimizer import Optimizer
+from supercontrast.optimizer.optimizer_factory import optimizer_factory
 from supercontrast.provider import Provider
 from supercontrast.provider.provider_factory import provider_factory
 from supercontrast.task.task_enum import Task
@@ -15,14 +16,18 @@ class SentimentAnalysisHandler(TaskHandler):
     def __init__(
         self,
         providers: List[Provider],
-        optimize_by: Optional[OptimizerFunction] = None,
+        optimizer: Optional[Optimizer] = None,
     ):
-        super().__init__(providers, optimize_by)
-        self.provider_connections = {
-            provider: provider_factory(task=Task.SENTIMENT_ANALYSIS, provider=provider)
+        self.task = Task.SENTIMENT_ANALYSIS
+        self.provider_handler_map = {
+            provider: provider_factory(task=Task.OCR, provider=provider)
             for provider in providers
         }
+        self.optimizer_handler = optimizer_factory(
+            task=Task.OCR, providers=providers, optimizer=optimizer
+        )
 
     def request(self, body: SentimentAnalysisRequest) -> SentimentAnalysisResponse:
-        provider = self._get_provider()
-        return provider.request(body)
+        provider = self.optimizer_handler.get_provider()
+        provider_handler = self.provider_handler_map[provider]
+        return provider_handler.request(body)

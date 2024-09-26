@@ -1,13 +1,15 @@
 from supercontrast.client import supercontrast_client
-from supercontrast.providers.provider import ProviderType
-from supercontrast.tasks.ocr import OCRRequest
-from supercontrast.tasks.sentiment_analysis import SentimentAnalysisRequest
-from supercontrast.tasks.task_types import Task
-from supercontrast.tasks.translation import TranslationRequest
+from supercontrast.provider import Provider
+from supercontrast.task import (
+    OCRRequest,
+    SentimentAnalysisRequest,
+    Task,
+    TranslationRequest,
+)
 
 azure_translation_client = supercontrast_client(
     task=Task.TRANSLATION,
-    providers=[ProviderType.AZURE],
+    providers=[Provider.AZURE],
     source_language="en",
     target_language="es",
 )
@@ -24,7 +26,7 @@ print("-" * 80)
 
 aws_sentiment_analysis_client = supercontrast_client(
     task=Task.SENTIMENT_ANALYSIS,
-    providers=[ProviderType.AWS],
+    providers=[Provider.AWS],
 )
 
 request = SentimentAnalysisRequest(text="I love programming in Python!")
@@ -39,7 +41,7 @@ print("-" * 80)
 
 gcp_ocr_client = supercontrast_client(
     task=Task.OCR,
-    providers=[ProviderType.GCP],
+    providers=[Provider.GCP],
 )
 
 request = OCRRequest(image="./example_data/ocr_sample.png")

@@ -1,20 +1,21 @@
 import boto3
 
-from supercontrast.providers.provider import Provider
-from supercontrast.tasks.ocr import OCRRequest, OCRResponse
-from supercontrast.tasks.sentiment_analysis import (
+from supercontrast.provider.provider_handler import ProviderHandler
+from supercontrast.task import (
+    OCRRequest,
+    OCRResponse,
     SentimentAnalysisRequest,
     SentimentAnalysisResponse,
+    Task,
+    TranslationRequest,
+    TranslationResponse,
 )
-from supercontrast.tasks.translation import TranslationRequest, TranslationResponse
+from supercontrast.utils.text import truncate_text
+
+# models
 
 
-def truncate_text(text: str, max_bytes: int = 5000):
-    """Truncate text to a maximum of max_bytes bytes."""
-    return text.encode("utf-8")[:max_bytes].decode("utf-8", "ignore")
-
-
-class AWSSentimentAnalysis(Provider):
+class AWSSentimentAnalysis(ProviderHandler):
     def __init__(self):
         super().__init__()
         self.client = boto3.client("comprehend")
@@ -39,7 +40,7 @@ class AWSSentimentAnalysis(Provider):
         return cls()
 
 
-class AWSTranslate(Provider):
+class AWSTranslate(ProviderHandler):
     def __init__(self, src_language: str, target_language: str):
         super().__init__()
         self.client = boto3.client("translate")
@@ -68,7 +69,7 @@ class AWSTranslate(Provider):
         return cls(source_language, target_language)
 
 
-class AWSOCR(Provider):
+class AWSOCR(ProviderHandler):
     def __init__(self):
         super().__init__()
         self.client = boto3.client("textract")
@@ -97,3 +98,21 @@ class AWSOCR(Provider):
     @classmethod
     def init_from_env(cls) -> "AWSOCR":
         return cls()
+
+
+# factory
+
+
+def aws_provider_factory(task: Task, **config) -> ProviderHandler:
+    if task == Task.SENTIMENT_ANALYSIS:
+        return AWSSentimentAnalysis.init_from_env()
+    elif task == Task.TRANSLATION:
+        source_language = config.get("source_language", "en")
+        target_language = config.get("target_language", "es")
+        return AWSTranslate.init_from_env(
+            source_language=source_language, target_language=target_language
+        )
+    elif task == Task.OCR:
+        return AWSOCR.init_from_env()
+    else:
+        raise ValueError(f"Unsupported task: {task}")

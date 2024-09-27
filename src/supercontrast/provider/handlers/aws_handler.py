@@ -1,6 +1,6 @@
 import boto3
 
-from supercontrast.metrics.decorators import track_latency
+from supercontrast.provider.provider_enum import Provider
 from supercontrast.provider.provider_handler import ProviderHandler
 from supercontrast.task import (
     OCRRequest,
@@ -18,11 +18,10 @@ from supercontrast.utils.text import truncate_text
 
 class AWSSentimentAnalysis(ProviderHandler):
     def __init__(self):
-        super().__init__()
+        super().__init__(provider=Provider.AWS, task=Task.SENTIMENT_ANALYSIS)
         self.client = boto3.client("comprehend")
         self.THRESHOLD = 0
 
-    @track_latency
     def request(self, request: SentimentAnalysisRequest) -> SentimentAnalysisResponse:
         response = self.client.detect_sentiment(
             Text=truncate_text(request.text), LanguageCode="en"
@@ -44,7 +43,7 @@ class AWSSentimentAnalysis(ProviderHandler):
 
 class AWSTranslate(ProviderHandler):
     def __init__(self, src_language: str, target_language: str):
-        super().__init__()
+        super().__init__(provider=Provider.AWS, task=Task.TRANSLATION)
         self.client = boto3.client("translate")
         self.src_language = src_language
         self.target_language = target_language
@@ -52,6 +51,8 @@ class AWSTranslate(ProviderHandler):
     def request(self, request: TranslationRequest) -> TranslationResponse:
         response = self.client.translate_text(
             Text=truncate_text(request.text),
+            SourceLanguageCode=self.src_language,
+            TargetLanguageCode=self.target_language,
         )
         translated_text = response["TranslatedText"]
 
@@ -73,7 +74,7 @@ class AWSTranslate(ProviderHandler):
 
 class AWSOCR(ProviderHandler):
     def __init__(self):
-        super().__init__()
+        super().__init__(provider=Provider.AWS, task=Task.OCR)
         self.client = boto3.client("textract")
 
     def request(self, request: OCRRequest) -> OCRResponse:

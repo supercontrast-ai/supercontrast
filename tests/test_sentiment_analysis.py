@@ -1,17 +1,21 @@
 from supercontrast.client import supercontrast_client
 from supercontrast.provider import Provider
-from supercontrast.task import SentimentAnalysisRequest, Task
+from supercontrast.task import SentimentAnalysisRequest, SentimentAnalysisResponse, Task
 
 # helper functions
 
 
-def print_request_and_response(request, response):
-    print("-" * 80, "\n")
+def print_request_and_response(
+    request: SentimentAnalysisRequest,
+    response: SentimentAnalysisResponse,
+    provider: Provider,
+):
+    print("\n", "-" * 80, "\n")
     print("Sentiment Analysis Request:")
     print(request, "\n")
-    print("Sentiment Analysis Response from AWS:")
+    print(f"Sentiment Analysis Response from {provider}:")
     print(response, "\n")
-    print("-" * 80)
+    print("-" * 80, "\n")
 
 
 # tests
@@ -27,7 +31,8 @@ def test_sentiment_analysis_aws():
     assert response is not None
     assert isinstance(response.score, float)
     assert response.score > 0
-    print_request_and_response(request, response)
+
+    print_request_and_response(request, response, provider=Provider.AWS)
 
 
 def test_sentiment_analysis_azure():
@@ -41,6 +46,8 @@ def test_sentiment_analysis_azure():
     assert isinstance(response.score, float)
     assert response.score > 0
 
+    print_request_and_response(request, response, provider=Provider.AZURE)
+
 
 def test_sentiment_analysis_gcp():
     sentiment_analysis_gcp_client = supercontrast_client(
@@ -52,3 +59,5 @@ def test_sentiment_analysis_gcp():
     assert response is not None
     assert isinstance(response.score, float)
     assert response.score > 0
+
+    print_request_and_response(request, response, provider=Provider.GCP)

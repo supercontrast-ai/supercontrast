@@ -1,6 +1,7 @@
 import os
 
 from google.cloud import language_v1, translate_v2, vision_v1
+import requests
 
 from supercontrast.provider.provider_enum import Provider
 from supercontrast.provider.provider_handler import ProviderHandler
@@ -91,8 +92,11 @@ class GCPOCR(ProviderHandler):
 
     def request(self, request: OCRRequest) -> OCRResponse:
         if isinstance(request.image, str):
-            with open(request.image, "rb") as image_file:
-                content = image_file.read()
+            if request.image.startswith(('http://', 'https://')):
+                content = requests.get(request.image).content
+            else:
+                with open(request.image, 'rb') as image_file:
+                    content = image_file.read()
         else:
             content = request.image
 

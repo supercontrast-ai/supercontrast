@@ -9,6 +9,7 @@ from azure.cognitiveservices.vision.computervision.models import OperationStatus
 from azure.core.credentials import AzureKeyCredential
 from msrest.authentication import CognitiveServicesCredentials
 
+from supercontrast.provider.provider_enum import Provider
 from supercontrast.provider.provider_handler import ProviderHandler
 from supercontrast.task import (
     OCRRequest,
@@ -25,7 +26,7 @@ from supercontrast.task import (
 
 class AzureSentimentAnalysis(ProviderHandler):
     def __init__(self, endpoint: str, key: str):
-        super().__init__()
+        super().__init__(provider=Provider.AZURE, task=Task.SENTIMENT_ANALYSIS)
         self.client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
 
     def request(self, request: SentimentAnalysisRequest) -> SentimentAnalysisResponse:
@@ -54,7 +55,7 @@ class AzureTranslation(ProviderHandler):
     def __init__(
         self, key: str, region: str, source_language: str, target_language: str
     ):
-        super().__init__()
+        super().__init__(provider=Provider.AZURE, task=Task.TRANSLATION)
         self.client = TextTranslationClient(
             credential=AzureKeyCredential(key), region=region
         )
@@ -89,7 +90,7 @@ class AzureTranslation(ProviderHandler):
 
 class AzureOCR(ProviderHandler):
     def __init__(self, endpoint: str, key: str):
-        super().__init__()
+        super().__init__(provider=Provider.AZURE, task=Task.OCR)
         self.client = ComputerVisionClient(endpoint, CognitiveServicesCredentials(key))
 
     def request(self, request: OCRRequest) -> OCRResponse:

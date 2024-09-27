@@ -1,0 +1,1 @@
+from supercontrast.metrics.decorators.track_latency import track_latency

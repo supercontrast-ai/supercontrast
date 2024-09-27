@@ -24,5 +24,31 @@ def test_sentiment_analysis_aws():
     request = SentimentAnalysisRequest(text="I love programming in Python!")
     response = sentiment_analysis_aws_client.request(request)
 
-    assert response != None
+    assert response is not None
+    assert isinstance(response.score, float)
+    assert response.score > 0
     print_request_and_response(request, response)
+
+
+def test_sentiment_analysis_azure():
+    sentiment_analysis_azure_client = supercontrast_client(
+        task=Task.SENTIMENT_ANALYSIS, providers=[Provider.AZURE]
+    )
+    request = SentimentAnalysisRequest(text="I love programming in Python!")
+    response = sentiment_analysis_azure_client.request(request)
+
+    assert response is not None
+    assert isinstance(response.score, float)
+    assert response.score > 0
+
+
+def test_sentiment_analysis_gcp():
+    sentiment_analysis_gcp_client = supercontrast_client(
+        task=Task.SENTIMENT_ANALYSIS, providers=[Provider.GCP]
+    )
+    request = SentimentAnalysisRequest(text="I love programming in Python!")
+    response = sentiment_analysis_gcp_client.request(request)
+
+    assert response is not None
+    assert isinstance(response.score, float)
+    assert response.score > 0

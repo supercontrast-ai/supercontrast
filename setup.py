@@ -1,20 +1,20 @@
 from setuptools import find_packages, setup
 
 with open("requirements.txt") as f:
-    required = f.read().splitlines()
+    required = [line.strip() for line in f if line.strip() and not line.startswith("#")]
 
 setup(
     name="supercontrast",
-    version="0.1.0",
+    version="0.0.1",
     package_dir={"": "src"},
     packages=find_packages(where="src"),
     install_requires=required,
     author="supercontrast",
-    author_email="founders@supercontrast.com",
-    description="A package for supercontrast functionality",
+    author_email="shravan@supercontrast.com",
+    description="supercontrast is a package for simplifying the use of multiple AI APIs",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/supercontrast",
+    url="https://github.com/supercontrast-ai/supercontrast",
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

@@ -1,22 +1,18 @@
 Metadata-Version: 2.1
 Name: supercontrast
-Version: 0.1.0
-Summary: A package for supercontrast functionality
-Home-page: https://github.com/yourusername/supercontrast
-Author: SuperContrast Founders
-Author-email: founders@supercontrast.com
+Version: 0.0.3
+Summary: supercontrast is a package for simplifying the use of multiple AI APIs
+Home-page: https://github.com/supercontrast-ai/supercontrast
+Author: supercontrast
+Author-email: shravan@supercontrast.com
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License
 Classifier: Operating System :: OS Independent
 Requires-Python: >=3.10
 Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: pydantic
 Requires-Dist: boto3
-Requires-Dist: azure-ai-textanalytics
-Requires-Dist: azure-cognitiveservices-vision-computervision
-Requires-Dist: azure-ai-translation-text
-Requires-Dist: azure-core
-Requires-Dist: msrest
-Requires-Dist: google-cloud-language
 Requires-Dist: google-api-python-client
 Requires-Dist: google-auth-oauthlib
 Requires-Dist: google-auth-httplib2
@@ -28,7 +24,11 @@ Requires-Dist: google-cloud-speech
 Requires-Dist: google-cloud-language
 Requires-Dist: google-cloud-translate
 Requires-Dist: google-cloud-vision
-Requires-Dist: pydantic
+Requires-Dist: msrest
+Requires-Dist: azure-ai-textanalytics
+Requires-Dist: azure-cognitiveservices-vision-computervision
+Requires-Dist: azure-ai-translation-text
+Requires-Dist: azure-core
 
 # supercontrast
 

@@ -1,17 +1,19 @@
 from supercontrast.client import supercontrast_client
 from supercontrast.provider import Provider
-from supercontrast.task import OCRRequest, Task
+from supercontrast.task import OCRRequest, OCRResponse, Task
 
 # helper functions
 
 
-def print_request_and_response(request, response):
-    print("-" * 80, "\n")
+def print_request_and_response(
+    request: OCRRequest, response: OCRResponse, provider: Provider
+):
+    print("\n", "-" * 80, "\n")
     print("OCR Request:")
     print(request, "\n")
-    print("OCR Response from AWS:")
+    print(f"OCR Response from {provider}:")
     print(response, "\n")
-    print("-" * 80)
+    print("-" * 80, "\n")
 
 
 # tests
@@ -27,7 +29,8 @@ def test_ocr_aws():
     assert response is not None
     assert isinstance(response.text, str)
     assert len(response.text) > 0
-    print_request_and_response(request, response)
+
+    print_request_and_response(request, response, provider=Provider.AWS)
 
 
 def test_ocr_azure():
@@ -40,7 +43,8 @@ def test_ocr_azure():
     assert response is not None
     assert isinstance(response.text, str)
     assert len(response.text) > 0
-    print_request_and_response(request, response)
+
+    print_request_and_response(request, response, provider=Provider.AZURE)
 
 
 def test_ocr_gcp():
@@ -53,4 +57,5 @@ def test_ocr_gcp():
     assert response is not None
     assert isinstance(response.text, str)
     assert len(response.text) > 0
-    print_request_and_response(request, response)
+
+    print_request_and_response(request, response, provider=Provider.GCP)

@@ -1,17 +1,19 @@
 from supercontrast.client import supercontrast_client
 from supercontrast.provider import Provider
-from supercontrast.task import Task, TranslationRequest
+from supercontrast.task import Task, TranslationRequest, TranslationResponse
 
 # helper functions
 
 
-def print_request_and_response(request, response):
-    print("-" * 80, "\n")
+def print_request_and_response(
+    request: TranslationRequest, response: TranslationResponse, provider: Provider
+):
+    print("\n", "-" * 80, "\n")
     print("Translation Request:")
     print(request, "\n")
-    print("Translation Response:")
+    print(f"Translation Response from {provider}:")
     print(response, "\n")
-    print("-" * 80)
+    print("-" * 80, "\n")
 
 
 # tests
@@ -31,7 +33,8 @@ def test_translate_aws():
     assert isinstance(response.text, str)
     assert len(response.text) > 0
     assert response.text != request.text
-    print_request_and_response(request, response)
+
+    print_request_and_response(request, response, provider=Provider.AWS)
 
 
 def test_translate_azure():
@@ -48,7 +51,8 @@ def test_translate_azure():
     assert isinstance(response.text, str)
     assert len(response.text) > 0
     assert response.text != request.text
-    print_request_and_response(request, response)
+
+    print_request_and_response(request, response, provider=Provider.AZURE)
 
 
 def test_translate_gcp():
@@ -65,4 +69,5 @@ def test_translate_gcp():
     assert isinstance(response.text, str)
     assert len(response.text) > 0
     assert response.text != request.text
-    print_request_and_response(request, response)
+
+    print_request_and_response(request, response, provider=Provider.GCP)

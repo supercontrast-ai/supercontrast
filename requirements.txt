@@ -1,10 +1,10 @@
+# Core
+pydantic
+
+# Amazon Web Services
 boto3
-azure-ai-textanalytics
-azure-cognitiveservices-vision-computervision
-azure-ai-translation-text
-azure-core
-msrest
-google-cloud-language
+
+# Google Cloud
 google-api-python-client
 google-auth-oauthlib
 google-auth-httplib2
@@ -16,4 +16,10 @@ google-cloud-speech
 google-cloud-language
 google-cloud-translate
 google-cloud-vision
-pydantic
+
+# Microsoft Azure
+msrest
+azure-ai-textanalytics
+azure-cognitiveservices-vision-computervision
+azure-ai-translation-text
+azure-core

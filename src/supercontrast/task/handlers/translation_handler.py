@@ -18,7 +18,7 @@ class TranslationHandler(TaskHandler):
     ):
         self.task = Task.TRANSLATION
         self.provider_handler_map = {
-            provider: provider_factory(task=Task.TRANSLATION, provider=provider)
+            provider: provider_factory(task=Task.TRANSLATION, provider=provider, **config)
             for provider in providers
         }
         self.optimizer_handler = optimizer_factory(

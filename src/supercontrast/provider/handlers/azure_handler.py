@@ -40,9 +40,9 @@ class AzureSentimentAnalysis(ProviderHandler):
         return "Azure Text Analytics - Sentiment Analysis"
 
     @classmethod
-    def init_from_env(cls) -> "AzureSentimentAnalysis":
-        endpoint = os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")
-        key = os.environ.get("AZURE_TEXT_ANALYTICS_KEY")
+    def init_from_env(cls, endpoint=None, key=None) -> "AzureSentimentAnalysis":
+        endpoint = endpoint or os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")
+        key = key or os.environ.get("AZURE_TEXT_ANALYTICS_KEY")
         if not endpoint or not key:
             raise ValueError(
                 "AZURE_TEXT_ANALYTICS_ENDPOINT and AZURE_TEXT_ANALYTICS_KEY must be set"
@@ -76,10 +76,10 @@ class AzureTranslation(ProviderHandler):
 
     @classmethod
     def init_from_env(
-        cls, source_language: str, target_language: str
+        cls, source_language: str, target_language: str, key=None, region=None
     ) -> "AzureTranslation":
-        key = os.environ.get("AZURE_TEXT_ANALYTICS_KEY")
-        region = os.environ.get("AZURE_TRANSLATOR_REGION")
+        key = key or os.environ.get("AZURE_TEXT_ANALYTICS_KEY")
+        region = region or os.environ.get("AZURE_TRANSLATOR_REGION")
         if not key or not region:
             raise ValueError(
                 "AZURE_TEXT_ANALYTICS_KEY and AZURE_TRANSLATOR_REGION must be set"
@@ -131,9 +131,9 @@ class AzureOCR(ProviderHandler):
         return "Azure Computer Vision - OCR"
 
     @classmethod
-    def init_from_env(cls) -> "AzureOCR":
-        endpoint = os.environ.get("AZURE_VISION_ENDPOINT")
-        key = os.environ.get("AZURE_VISION_KEY")
+    def init_from_env(cls, endpoint=None, key=None) -> "AzureOCR":
+        endpoint = endpoint or os.environ.get("AZURE_VISION_ENDPOINT")
+        key = key or os.environ.get("AZURE_VISION_KEY")
         if not endpoint or not key:
             raise ValueError("AZURE_VISION_ENDPOINT and AZURE_VISION_KEY must be set")
 
@@ -145,14 +145,21 @@ class AzureOCR(ProviderHandler):
 
 def azure_provider_factory(task: Task, **config) -> ProviderHandler:
     if task == Task.SENTIMENT_ANALYSIS:
-        return AzureSentimentAnalysis.init_from_env()
+        endpoint = config.get("azure_text_analytics_endpoint")
+        key = config.get("azure_text_analytics_key")
+        return AzureSentimentAnalysis.init_from_env(endpoint=endpoint, key=key)
     elif task == Task.TRANSLATION:
         source_language = config.get("source_language", "en")
         target_language = config.get("target_language", "es")
+        key = config.get("azure_text_analytics_key")
+        region = config.get("azure_translator_region")
         return AzureTranslation.init_from_env(
-            source_language=source_language, target_language=target_language
+            source_language=source_language, target_language=target_language,
+            key=key, region=region
         )
     elif task == Task.OCR:
-        return AzureOCR.init_from_env()
+        endpoint = config.get("azure_vision_endpoint")
+        key = config.get("azure_vision_key")
+        return AzureOCR.init_from_env(endpoint=endpoint, key=key)
     else:
         raise ValueError(f"Unsupported task: {task}")

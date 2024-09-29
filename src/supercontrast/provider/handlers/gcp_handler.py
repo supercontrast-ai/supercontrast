@@ -14,9 +14,6 @@ from supercontrast.task import (
     TranslationResponse,
 )
 
-# models
-
-
 class GCPSentimentAnalysis(ProviderHandler):
     def __init__(self, api_key: str):
         super().__init__(provider=Provider.GCP, task=Task.SENTIMENT_ANALYSIS)
@@ -41,8 +38,8 @@ class GCPSentimentAnalysis(ProviderHandler):
         return "Google Natural Language - Sentiment Analysis"
 
     @classmethod
-    def init_from_env(cls) -> "GCPSentimentAnalysis":
-        api_key = os.environ.get("GCP_API_KEY")
+    def init_from_env(cls, api_key=None) -> "GCPSentimentAnalysis":
+        api_key = api_key or os.environ.get("GCP_API_KEY")
         if not api_key:
             raise ValueError(
                 "API key not provided and GCP_API_KEY environment variable not set"
@@ -72,9 +69,9 @@ class GCPTranslation(ProviderHandler):
 
     @classmethod
     def init_from_env(
-        cls, source_language: str, target_language: str
+        cls, source_language: str, target_language: str, api_key=None
     ) -> "GCPTranslation":
-        api_key = os.environ.get("GCP_API_KEY")
+        api_key = api_key or os.environ.get("GCP_API_KEY")
         if not api_key:
             raise ValueError(
                 "API key not provided and GCP_API_KEY environment variable not set"
@@ -91,12 +88,15 @@ class GCPOCR(ProviderHandler):
 
     def request(self, request: OCRRequest) -> OCRResponse:
         if isinstance(request.image, str):
-            with open(request.image, "rb") as image_file:
-                content = image_file.read()
+            if request.image.startswith('http'):
+                image = vision_v1.Image(source=vision_v1.ImageSource(image_uri=request.image))
+            else:
+                with open(request.image, "rb") as image_file:
+                    content = image_file.read()
+                image = vision_v1.Image(content=content)
         else:
-            content = request.image
+            image = vision_v1.Image(content=request.image)
 
-        image = vision_v1.Image(content=content)
         response = self.client.document_text_detection(image=image)  # type: ignore
 
         extracted_text = response.full_text_annotation.text  # type: ignore
@@ -107,8 +107,8 @@ class GCPOCR(ProviderHandler):
         return "Google Vision - OCR"
 
     @classmethod
-    def init_from_env(cls) -> "GCPOCR":
-        api_key = os.environ.get("GCP_API_KEY")
+    def init_from_env(cls, api_key=None) -> "GCPOCR":
+        api_key = api_key or os.environ.get("GCP_API_KEY")
         if not api_key:
             raise ValueError(
                 "API key not provided and GCP_API_KEY environment variable not set"
@@ -120,15 +120,17 @@ class GCPOCR(ProviderHandler):
 
 
 def gcp_provider_factory(task: Task, **config) -> ProviderHandler:
+    api_key = config.get("gcp_api_key")
+
     if task == Task.SENTIMENT_ANALYSIS:
-        return GCPSentimentAnalysis.init_from_env()
+        return GCPSentimentAnalysis.init_from_env(api_key=api_key)
     elif task == Task.TRANSLATION:
         source_language = config.get("source_language", "en")
         target_language = config.get("target_language", "es")
         return GCPTranslation.init_from_env(
-            source_language=source_language, target_language=target_language
+            source_language=source_language, target_language=target_language, api_key=api_key
         )
     elif task == Task.OCR:
-        return GCPOCR.init_from_env()
+        return GCPOCR.init_from_env(api_key=api_key)
     else:
         raise ValueError(f"Unsupported task: {task}")

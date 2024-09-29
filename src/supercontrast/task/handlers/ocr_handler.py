@@ -14,10 +14,11 @@ class OCRHandler(TaskHandler):
         self,
         providers: List[Provider],
         optimizer: Optional[Optimizer] = None,
+        **config,
     ):
         self.task = Task.OCR
         self.provider_handler_map = {
-            provider: provider_factory(task=Task.OCR, provider=provider)
+            provider: provider_factory(task=Task.OCR, provider=provider, **config)
             for provider in providers
         }
         self.optimizer_handler = optimizer_factory(

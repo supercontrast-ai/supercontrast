@@ -1,6 +1,7 @@
 import boto3
 import threading
 import time
+import logging
 
 from datetime import UTC, datetime, timedelta
 from functools import wraps
@@ -13,7 +14,7 @@ from supercontrast.task import Task
 def track_cost(func: Callable[..., Any]) -> Callable[..., Any]:
     @wraps(func)
     def wrapper(*args, **kwargs):
-        if args and isinstance(args[0], Task) and isinstance(args[0], Provider):
+        if args and isinstance(args[0], Task) and isinstance(args[1], Provider):
             task = args[0]
             provider = args[1]
             if provider == Provider.AWS:
@@ -23,7 +24,7 @@ def track_cost(func: Callable[..., Any]) -> Callable[..., Any]:
 
                 # Get initial cost for the last month
                 initial_cost = track_aws_cost(task, last_month_start, last_month_end)
-                print(f"Initial cost for the last month: ${initial_cost:.6f}")
+                logging.info(f"Initial cost for the last month: ${initial_cost:.6f}")
                 result = func(*args, **kwargs)
 
                 # Set up hourly cost tracking
@@ -32,7 +33,7 @@ def track_cost(func: Callable[..., Any]) -> Callable[..., Any]:
                         time.sleep(3600)  # Wait for an hour
                         current_time = datetime.now(UTC)
                         hourly_cost = track_aws_cost(task, start_time, current_time)
-                        print(f"Cost incurred in the last hour: ${hourly_cost:.6f}")
+                        logging.info(f"Cost incurred in the last hour: ${hourly_cost:.6f}")
 
                 # Start hourly cost tracking in a separate thread
                 cost_thread = threading.Thread(target=track_hourly_cost, daemon=True)
@@ -76,16 +77,16 @@ def track_aws_cost(task: Task, start_time: datetime, end_time: datetime):
 
             if usage > 0:
                 avg_cost_per_request = cost / usage
-                print(
+                logging.info(
                     f"Average cost per request for {task} in {service_name}: ${avg_cost_per_request:.6f}"
                 )
             else:
-                print(
+                logging.info(
                     f"No usage recorded for {task} in {service_name} during this period."
                 )
 
-    # If no results, print a message
+    # If no results, log a message
     if not response["ResultsByTime"]:
-        print(
+        logging.info(
             f"No cost data available for {task} in {service_name} during this period."
         )

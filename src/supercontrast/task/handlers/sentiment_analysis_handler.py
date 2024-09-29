@@ -17,10 +17,13 @@ class SentimentAnalysisHandler(TaskHandler):
         self,
         providers: List[Provider],
         optimizer: Optional[Optimizer] = None,
+        **config,
     ):
         self.task = Task.SENTIMENT_ANALYSIS
         self.provider_handler_map = {
-            provider: provider_factory(task=Task.SENTIMENT_ANALYSIS, provider=provider)
+            provider: provider_factory(
+                task=Task.SENTIMENT_ANALYSIS, provider=provider, **config
+            )
             for provider in providers
         }
         self.optimizer_handler = optimizer_factory(

@@ -9,6 +9,10 @@
     <a href="https://discord.gg/R9TSAc23">
         <img src="https://img.shields.io/static/v1?label=Chat%20on&message=Discord&color=blue&logo=Discord&style=flat-square" alt="Discord">
     </a>
+    <a href="https://docs.supercontrast.com/" target="_blank">
+        <img src="https://img.shields.io/badge/docs-latest-blue.svg" alt="Documentation Status">
+    </a>
+
 </h4>
 
 `supercontrast` is a package for easily running models from a variety of providers.

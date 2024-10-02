@@ -14,6 +14,7 @@ from supercontrast.task import (
     TranslationResponse,
 )
 
+
 class GCPSentimentAnalysis(ProviderHandler):
     def __init__(self, api_key: str):
         super().__init__(provider=Provider.GCP, task=Task.SENTIMENT_ANALYSIS)
@@ -88,8 +89,10 @@ class GCPOCR(ProviderHandler):
 
     def request(self, request: OCRRequest) -> OCRResponse:
         if isinstance(request.image, str):
-            if request.image.startswith('http'):
-                image = vision_v1.Image(source=vision_v1.ImageSource(image_uri=request.image))
+            if request.image.startswith(("http://", "https://")):
+                image = vision_v1.Image(
+                    source=vision_v1.ImageSource(image_uri=request.image)
+                )
             else:
                 with open(request.image, "rb") as image_file:
                     content = image_file.read()
@@ -128,7 +131,9 @@ def gcp_provider_factory(task: Task, **config) -> ProviderHandler:
         source_language = config.get("source_language", "en")
         target_language = config.get("target_language", "es")
         return GCPTranslation.init_from_env(
-            source_language=source_language, target_language=target_language, api_key=api_key
+            source_language=source_language,
+            target_language=target_language,
+            api_key=api_key,
         )
     elif task == Task.OCR:
         return GCPOCR.init_from_env(api_key=api_key)

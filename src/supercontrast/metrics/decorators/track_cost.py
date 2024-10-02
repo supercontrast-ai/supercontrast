@@ -1,7 +1,7 @@
 import boto3
+import logging
 import threading
 import time
-import logging
 
 from datetime import UTC, datetime, timedelta
 from functools import wraps
@@ -33,7 +33,9 @@ def track_cost(func: Callable[..., Any]) -> Callable[..., Any]:
                         time.sleep(3600)  # Wait for an hour
                         current_time = datetime.now(UTC)
                         hourly_cost = track_aws_cost(task, start_time, current_time)
-                        logging.info(f"Cost incurred in the last hour: ${hourly_cost:.6f}")
+                        logging.info(
+                            f"Cost incurred in the last hour: ${hourly_cost:.6f}"
+                        )
 
                 # Start hourly cost tracking in a separate thread
                 cost_thread = threading.Thread(target=track_hourly_cost, daemon=True)

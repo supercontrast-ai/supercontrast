@@ -95,7 +95,11 @@ class AzureOCR(ProviderHandler):
 
     def request(self, request: OCRRequest) -> OCRResponse:
         if isinstance(request.image, str):
-            read_response = self.client.read(request.image, raw=True)
+            if request.image.startswith(("http://", "https://")):
+                read_response = self.client.read(request.image, raw=True)
+            else:
+                with open(request.image, "rb") as image_file:
+                    read_response = self.client.read_in_stream(image_file, raw=True)
         else:
             read_response = self.client.read_in_stream(
                 io.BytesIO(request.image), raw=True
@@ -154,8 +158,10 @@ def azure_provider_factory(task: Task, **config) -> ProviderHandler:
         key = config.get("azure_text_analytics_key")
         region = config.get("azure_translator_region")
         return AzureTranslation.init_from_env(
-            source_language=source_language, target_language=target_language,
-            key=key, region=region
+            source_language=source_language,
+            target_language=target_language,
+            key=key,
+            region=region,
         )
     elif task == Task.OCR:
         endpoint = config.get("azure_vision_endpoint")

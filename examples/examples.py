@@ -39,3 +39,14 @@ client = supercontrast_client(
 input_text = "I love this product!"
 response = client.request(TranslationRequest(text=input_text))
 print_response("Azure", Task.TRANSLATION, input_text, response)
+
+# Sending a OCR Request to Sentisight
+client = supercontrast_client(
+    task=Task.OCR,
+    providers=[Provider.SENTISIGHT],
+    optimizer=None,
+    language="en",
+)
+input_image = "https://jeroen.github.io/images/testocr.png"
+response = client.request(OCRRequest(image=input_image))
+print_response("Sentisight", Task.OCR, input_image, response)

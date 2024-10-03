@@ -7,3 +7,4 @@ class Provider(Enum):
     AZURE = "azure"
     SENTISIGHT = "sentisight"
     API4AI = "api4ai"
+    CLARIFAI = "clarifai"

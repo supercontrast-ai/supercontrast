@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Union
+from typing import List, Optional, Tuple, Union
 
 # Request
 
@@ -11,5 +11,11 @@ class OCRRequest(BaseModel):
 # Response
 
 
+class OCRBoundingBox(BaseModel):
+    text: str
+    coordinates: List[Tuple[int, int]]
+
+
 class OCRResponse(BaseModel):
     text: str
+    bounding_boxes: Optional[List[OCRBoundingBox]] = None

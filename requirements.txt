@@ -1,5 +1,10 @@
 # Core
 pydantic
+pillow
+
+# Linter
+black
+isort
 
 # Amazon Web Services
 boto3

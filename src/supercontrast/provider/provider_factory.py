@@ -1,5 +1,7 @@
+from supercontrast.provider.handlers.api4ai_handler import api4ai_provider_factory
 from supercontrast.provider.handlers.aws_handler import aws_provider_factory
 from supercontrast.provider.handlers.azure_handler import azure_provider_factory
+from supercontrast.provider.handlers.clarifai_handler import clarifai_provider_factory
 from supercontrast.provider.handlers.gcp_handler import gcp_provider_factory
 from supercontrast.provider.handlers.sentisight_handler import (
     sentisight_provider_factory,
@@ -18,5 +20,9 @@ def provider_factory(task: Task, provider: Provider, **config) -> ProviderHandle
         return azure_provider_factory(task, **config)
     elif provider == Provider.SENTISIGHT:
         return sentisight_provider_factory(task, **config)
+    elif provider == Provider.API4AI:
+        return api4ai_provider_factory(task, **config)
+    elif provider == Provider.CLARIFAI:
+        return clarifai_provider_factory(task, **config)
     else:
         raise ValueError(f"Unsupported provider: {provider}")

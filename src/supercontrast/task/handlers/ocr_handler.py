@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from supercontrast.optimizer import Optimizer
 from supercontrast.optimizer.optimizer_factory import optimizer_factory
@@ -25,7 +25,22 @@ class OCRHandler(TaskHandler):
             task=Task.OCR, providers=providers, optimizer=optimizer
         )
 
-    def request(self, body: OCRRequest) -> OCRResponse:
-        provider = self.optimizer_handler.get_provider()
+    def request(
+        self, body: OCRRequest, provider: Optional[Provider] = None
+    ) -> OCRResponse:
+        if provider is None:
+            provider = self.optimizer_handler.get_provider()
+
         provider_handler = self.provider_handler_map[provider]
         return provider_handler.request(body)
+
+    def evaluate(self, body: OCRRequest) -> Dict[Provider, OCRResponse]:
+        responses = {}
+        for provider, handler in self.provider_handler_map.items():
+            try:
+                response = handler.request(body)
+                responses[provider] = response
+            except Exception as e:
+                # Log the error or handle it as appropriate for your use case
+                print(f"Error evaluating provider {provider}: {str(e)}")
+        return responses

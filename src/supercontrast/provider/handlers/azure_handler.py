@@ -12,6 +12,7 @@ from msrest.authentication import CognitiveServicesCredentials
 from supercontrast.provider.provider_enum import Provider
 from supercontrast.provider.provider_handler import ProviderHandler
 from supercontrast.task import (
+    OCRBoundingBox,
     OCRRequest,
     OCRResponse,
     SentimentAnalysisRequest,
@@ -20,8 +21,9 @@ from supercontrast.task import (
     TranslationRequest,
     TranslationResponse,
 )
+from supercontrast.utils.image import get_image_size, load_image_data
 
-# models
+# Task.SENTIMENT_ANALYSIS
 
 
 class AzureSentimentAnalysis(ProviderHandler):
@@ -49,6 +51,9 @@ class AzureSentimentAnalysis(ProviderHandler):
             )
 
         return cls(endpoint, key)
+
+
+# Task.TRANSLATION
 
 
 class AzureTranslation(ProviderHandler):
@@ -88,22 +93,17 @@ class AzureTranslation(ProviderHandler):
         return cls(key, region, source_language, target_language)
 
 
+# Task.OCR
+
+
 class AzureOCR(ProviderHandler):
     def __init__(self, endpoint: str, key: str):
         super().__init__(provider=Provider.AZURE, task=Task.OCR)
         self.client = ComputerVisionClient(endpoint, CognitiveServicesCredentials(key))
 
     def request(self, request: OCRRequest) -> OCRResponse:
-        if isinstance(request.image, str):
-            if request.image.startswith(("http://", "https://")):
-                read_response = self.client.read(request.image, raw=True)
-            else:
-                with open(request.image, "rb") as image_file:
-                    read_response = self.client.read_in_stream(image_file, raw=True)
-        else:
-            read_response = self.client.read_in_stream(
-                io.BytesIO(request.image), raw=True
-            )
+        image_data = load_image_data(request.image)
+        read_response = self.client.read_in_stream(io.BytesIO(image_data), raw=True)
 
         if not read_response:
             raise ValueError("Failed to read image")
@@ -123,13 +123,28 @@ class AzureOCR(ProviderHandler):
             time.sleep(1)
 
         extracted_text = ""
+        bounding_boxes = []
 
         if read_result.status == OperationStatusCodes.succeeded:  # type: ignore
             for text_result in read_result.analyze_result.read_results:  # type: ignore
                 for line in text_result.lines:
                     extracted_text += line.text + "\n"
+                    bounding_boxes.append(
+                        OCRBoundingBox(
+                            text=line.text,
+                            coordinates=[
+                                (line.bounding_box[0], line.bounding_box[1]),
+                                (line.bounding_box[2], line.bounding_box[3]),
+                                (line.bounding_box[4], line.bounding_box[5]),
+                                (line.bounding_box[6], line.bounding_box[7]),
+                            ],
+                        )
+                    )
 
-        return OCRResponse(text=extracted_text.strip())
+        response = OCRResponse(
+            all_text=extracted_text.strip(), bounding_boxes=bounding_boxes
+        )
+        return response
 
     def get_name(self) -> str:
         return "Azure Computer Vision - OCR"

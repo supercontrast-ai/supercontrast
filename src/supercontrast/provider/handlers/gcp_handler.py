@@ -6,6 +6,7 @@ from google.oauth2 import service_account
 from supercontrast.provider.provider_enum import Provider
 from supercontrast.provider.provider_handler import ProviderHandler
 from supercontrast.task import (
+    OCRBoundingBox,
     OCRRequest,
     OCRResponse,
     SentimentAnalysisRequest,
@@ -14,6 +15,9 @@ from supercontrast.task import (
     TranslationRequest,
     TranslationResponse,
 )
+from supercontrast.utils.image import load_image_data
+
+# Task.SENTIMENT_ANALYSIS
 
 
 class GCPSentimentAnalysis(ProviderHandler):
@@ -48,6 +52,9 @@ class GCPSentimentAnalysis(ProviderHandler):
             credentials_path
         )
         return cls(credentials)
+
+
+# Task.TRANSLATION
 
 
 class GCPTranslation(ProviderHandler):
@@ -85,29 +92,40 @@ class GCPTranslation(ProviderHandler):
         return cls(credentials, source_language, target_language)
 
 
+# Task.OCR
+
+
 class GCPOCR(ProviderHandler):
     def __init__(self, credentials):
         super().__init__(provider=Provider.GCP, task=Task.OCR)
         self.client = vision_v1.ImageAnnotatorClient(credentials=credentials)
 
     def request(self, request: OCRRequest) -> OCRResponse:
-        if isinstance(request.image, str):
-            if request.image.startswith(("http://", "https://")):
-                image = vision_v1.Image(
-                    source=vision_v1.ImageSource(image_uri=request.image)
-                )
-            else:
-                with open(request.image, "rb") as image_file:
-                    content = image_file.read()
-                image = vision_v1.Image(content=content)
-        else:
-            image = vision_v1.Image(content=request.image)
+        image_data = load_image_data(request.image)
+        image = vision_v1.Image(content=image_data)
 
         response = self.client.document_text_detection(image=image)  # type: ignore
 
         extracted_text = response.full_text_annotation.text  # type: ignore
 
-        return OCRResponse(text=extracted_text.strip())
+        bounding_boxes = []
+        for page in response.full_text_annotation.pages:
+            for block in page.blocks:
+                for paragraph in block.paragraphs:
+                    for word in paragraph.words:
+                        word_text = "".join([symbol.text for symbol in word.symbols])
+                        vertices = [
+                            (vertex.x, vertex.y)
+                            for vertex in word.bounding_box.vertices
+                        ]
+                        bounding_boxes.append(
+                            OCRBoundingBox(text=word_text, coordinates=vertices)
+                        )
+
+        response = OCRResponse(
+            all_text=extracted_text.strip(), bounding_boxes=bounding_boxes
+        )
+        return response
 
     def get_name(self) -> str:
         return "Google Vision - OCR"

@@ -41,8 +41,12 @@ class GCPSentimentAnalysis(ProviderHandler):
     def init_from_env(cls) -> "GCPSentimentAnalysis":
         credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
         if not credentials_path:
-            raise EnvironmentError("GOOGLE_APPLICATION_CREDENTIALS environment variable is not set")
-        credentials = service_account.Credentials.from_service_account_file(credentials_path)
+            raise EnvironmentError(
+                "GOOGLE_APPLICATION_CREDENTIALS environment variable is not set"
+            )
+        credentials = service_account.Credentials.from_service_account_file(
+            credentials_path
+        )
         return cls(credentials)
 
 
@@ -72,8 +76,12 @@ class GCPTranslation(ProviderHandler):
     ) -> "GCPTranslation":
         credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
         if not credentials_path:
-            raise EnvironmentError("GOOGLE_APPLICATION_CREDENTIALS environment variable is not set")
-        credentials = service_account.Credentials.from_service_account_file(credentials_path)
+            raise EnvironmentError(
+                "GOOGLE_APPLICATION_CREDENTIALS environment variable is not set"
+            )
+        credentials = service_account.Credentials.from_service_account_file(
+            credentials_path
+        )
         return cls(credentials, source_language, target_language)
 
 
@@ -108,8 +116,12 @@ class GCPOCR(ProviderHandler):
     def init_from_env(cls) -> "GCPOCR":
         credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
         if not credentials_path:
-            raise EnvironmentError("GOOGLE_APPLICATION_CREDENTIALS environment variable is not set")
-        credentials = service_account.Credentials.from_service_account_file(credentials_path)
+            raise EnvironmentError(
+                "GOOGLE_APPLICATION_CREDENTIALS environment variable is not set"
+            )
+        credentials = service_account.Credentials.from_service_account_file(
+            credentials_path
+        )
         return cls(credentials)
 
 

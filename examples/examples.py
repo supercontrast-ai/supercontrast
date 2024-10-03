@@ -50,3 +50,25 @@ client = supercontrast_client(
 input_image = "https://jeroen.github.io/images/testocr.png"
 response = client.request(OCRRequest(image=input_image))
 print_response("Sentisight", Task.OCR, input_image, response)
+
+# Sending a OCR Request to API4AI
+client = supercontrast_client(
+    task=Task.OCR,
+    providers=[Provider.API4AI],
+    optimizer=None,
+    language="en",
+)
+input_image = "https://jeroen.github.io/images/testocr.png"
+response = client.request(OCRRequest(image=input_image))
+print_response("API4AI", Task.OCR, input_image, response)
+
+client = supercontrast_client(
+    task=Task.OCR,
+    providers=[Provider.CLARIFAI],
+    optimizer=None,
+    language="en",
+)
+input_image = "https://jeroen.github.io/images/testocr.png"
+request = OCRRequest(image=input_image)
+response = client.request(request)
+print_response("Clarifai", Task.OCR, input_image, response)

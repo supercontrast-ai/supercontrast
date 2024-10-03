@@ -6,3 +6,5 @@ class Provider(Enum):
     GCP = "gcp"
     AZURE = "azure"
     SENTISIGHT = "sentisight"
+    API4AI = "api4ai"
+    CLARIFAI = "clarifai"

@@ -148,7 +148,10 @@ class AzureOCR(ProviderHandler):
                         )
                     )
 
-        return OCRResponse(text=extracted_text.strip(), bounding_boxes=bounding_boxes)
+        response = OCRResponse(
+            all_text=extracted_text.strip(), bounding_boxes=bounding_boxes
+        )
+        return response
 
     def get_name(self) -> str:
         return "Azure Computer Vision - OCR"

@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from supercontrast.optimizer import Optimizer
 from supercontrast.optimizer.optimizer_factory import optimizer_factory
@@ -30,7 +30,24 @@ class SentimentAnalysisHandler(TaskHandler):
             task=Task.SENTIMENT_ANALYSIS, providers=providers, optimizer=optimizer
         )
 
-    def request(self, body: SentimentAnalysisRequest) -> SentimentAnalysisResponse:
-        provider = self.optimizer_handler.get_provider()
+    def request(
+        self, body: SentimentAnalysisRequest, provider: Optional[Provider] = None
+    ) -> SentimentAnalysisResponse:
+        if provider is None:
+            provider = self.optimizer_handler.get_provider()
+
         provider_handler = self.provider_handler_map[provider]
         return provider_handler.request(body)
+
+    def evaluate(
+        self, body: SentimentAnalysisRequest
+    ) -> Dict[Provider, SentimentAnalysisResponse]:
+        responses = {}
+        for provider, handler in self.provider_handler_map.items():
+            try:
+                response = handler.request(body)
+                responses[provider] = response
+            except Exception as e:
+                # Log the error or handle it as appropriate for your use case
+                print(f"Error evaluating provider {provider}: {str(e)}")
+        return responses

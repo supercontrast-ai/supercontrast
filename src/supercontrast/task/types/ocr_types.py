@@ -17,5 +17,5 @@ class OCRBoundingBox(BaseModel):
 
 
 class OCRResponse(BaseModel):
-    text: str
-    bounding_boxes: Optional[List[OCRBoundingBox]] = None
+    all_text: str
+    bounding_boxes: List[OCRBoundingBox]

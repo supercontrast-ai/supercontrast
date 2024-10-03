@@ -6,6 +6,7 @@ from google.oauth2 import service_account
 from supercontrast.provider.provider_enum import Provider
 from supercontrast.provider.provider_handler import ProviderHandler
 from supercontrast.task import (
+    OCRBoundingBox,
     OCRRequest,
     OCRResponse,
     SentimentAnalysisRequest,
@@ -115,7 +116,24 @@ class GCPOCR(ProviderHandler):
 
         extracted_text = response.full_text_annotation.text  # type: ignore
 
-        return OCRResponse(text=extracted_text.strip())
+        bounding_boxes = []
+        for page in response.full_text_annotation.pages:
+            for block in page.blocks:
+                for paragraph in block.paragraphs:
+                    for word in paragraph.words:
+                        word_text = "".join([symbol.text for symbol in word.symbols])
+                        vertices = [
+                            (vertex.x, vertex.y)
+                            for vertex in word.bounding_box.vertices
+                        ]
+                        bounding_boxes.append(
+                            OCRBoundingBox(text=word_text, coordinates=vertices)
+                        )
+
+        response = OCRResponse(
+            all_text=extracted_text.strip(), bounding_boxes=bounding_boxes
+        )
+        return response
 
     def get_name(self) -> str:
         return "Google Vision - OCR"

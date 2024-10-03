@@ -21,9 +21,7 @@ def print_request_and_response(
 
 def test_ocr_aws():
     ocr_aws_client = supercontrast_client(task=Task.OCR, providers=[Provider.AWS])
-    request = OCRRequest(
-        image="./test_data/ocr_sample.png"
-    )  # Replace with actual test image path
+    request = OCRRequest(image="https://jeroen.github.io/images/testocr.png")
     response = ocr_aws_client.request(request)
 
     assert response is not None
@@ -36,9 +34,7 @@ def test_ocr_aws():
 
 def test_ocr_azure():
     ocr_azure_client = supercontrast_client(task=Task.OCR, providers=[Provider.AZURE])
-    request = OCRRequest(
-        image="./test_data/ocr_sample.png"
-    )  # Replace with actual test image path
+    request = OCRRequest(image="https://jeroen.github.io/images/testocr.png")
     response = ocr_azure_client.request(request)
 
     assert response is not None
@@ -51,9 +47,7 @@ def test_ocr_azure():
 
 def test_ocr_gcp():
     ocr_gcp_client = supercontrast_client(task=Task.OCR, providers=[Provider.GCP])
-    request = OCRRequest(
-        image="./test_data/ocr_sample.png"
-    )  # Replace with actual test image path
+    request = OCRRequest(image="https://jeroen.github.io/images/testocr.png")
     response = ocr_gcp_client.request(request)
 
     assert response is not None
@@ -68,9 +62,7 @@ def test_ocr_sentisight():
     ocr_sentisight_client = supercontrast_client(
         task=Task.OCR, providers=[Provider.SENTISIGHT]
     )
-    request = OCRRequest(
-        image="./test_data/ocr_sample.png"
-    )  # Replace with actual test image path
+    request = OCRRequest(image="https://jeroen.github.io/images/testocr.png")
     response = ocr_sentisight_client.request(request)
 
     assert response is not None

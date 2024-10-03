@@ -6,6 +6,12 @@ pillow
 black
 isort
 
+# Testing
+pytest
+
+# Visualization
+matplotlib
+
 # Amazon Web Services
 boto3
 

@@ -1,5 +1,13 @@
 # Core
 pydantic
+pillow
+
+# Linter
+black
+isort
+
+# Testing
+pytest
 
 # Amazon Web Services
 boto3

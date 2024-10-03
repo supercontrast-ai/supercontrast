@@ -1,9 +1,9 @@
 import boto3
-import requests
 
 from supercontrast.provider.provider_enum import Provider
 from supercontrast.provider.provider_handler import ProviderHandler
 from supercontrast.task import (
+    OCRBoundingBox,
     OCRRequest,
     OCRResponse,
     SentimentAnalysisRequest,
@@ -12,10 +12,12 @@ from supercontrast.task import (
     TranslationRequest,
     TranslationResponse,
 )
+from supercontrast.utils.image import get_image_size, load_image_data
 from supercontrast.utils.text import truncate_text
 
+# Task.SENTIMENT_ANALYSIS
 
-# models
+
 class AWSSentimentAnalysis(ProviderHandler):
     def __init__(
         self, aws_access_key_id=None, aws_secret_access_key=None, aws_session_token=None
@@ -48,6 +50,9 @@ class AWSSentimentAnalysis(ProviderHandler):
         cls, aws_access_key_id=None, aws_secret_access_key=None, aws_session_token=None
     ) -> "AWSSentimentAnalysis":
         return cls(aws_access_key_id, aws_secret_access_key, aws_session_token)
+
+
+# Task.TRANSLATION
 
 
 class AWSTranslate(ProviderHandler):
@@ -104,6 +109,9 @@ class AWSTranslate(ProviderHandler):
         )
 
 
+# Task.OCR
+
+
 class AWSOCR(ProviderHandler):
     def __init__(
         self, aws_access_key_id=None, aws_secret_access_key=None, aws_session_token=None
@@ -117,25 +125,43 @@ class AWSOCR(ProviderHandler):
         )
 
     def request(self, request: OCRRequest) -> OCRResponse:
-        if isinstance(request.image, str):
-            if request.image.startswith(("http://", "https://")):
-                image_data = requests.get(request.image).content
-            else:
-                with open(request.image, "rb") as image_file:
-                    image_data = image_file.read()
-        else:
-            image_data = request.image
+        image_data = load_image_data(request.image)
+
+        # Get image dimensions
+        width, height = get_image_size(request.image)
 
         response = self.client.analyze_document(
             Document={"Bytes": image_data}, FeatureTypes=["FORMS", "TABLES"]
         )
 
         extracted_text = ""
+        bounding_boxes = []
         for item in response.get("Blocks", []):
             if item["BlockType"] == "LINE":
                 extracted_text += item["Text"] + "\n"
+                if "Geometry" in item and "BoundingBox" in item["Geometry"]:
+                    bbox = item["Geometry"]["BoundingBox"]
+                    left = int(bbox["Left"] * width)
+                    top = int(bbox["Top"] * height)
+                    right = int((bbox["Left"] + bbox["Width"]) * width)
+                    bottom = int((bbox["Top"] + bbox["Height"]) * height)
 
-        return OCRResponse(text=extracted_text.strip())
+                    bounding_boxes.append(
+                        OCRBoundingBox(
+                            text=item["Text"],
+                            coordinates=[
+                                (left, top),
+                                (right, top),
+                                (right, bottom),
+                                (left, bottom),
+                            ],
+                        )
+                    )
+
+        response = OCRResponse(
+            all_text=extracted_text.strip(), bounding_boxes=bounding_boxes
+        )
+        return response
 
     def get_name(self) -> str:
         return "AWS Textract - OCR"

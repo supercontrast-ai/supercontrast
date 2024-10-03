@@ -71,3 +71,20 @@ def test_translate_gcp():
     assert response.text != request.text
 
     print_request_and_response(request, response, provider=Provider.GCP)
+
+def test_translate_modernmt():
+    translate_modernmt_client = supercontrast_client(
+        task=Task.TRANSLATION,
+        providers=[Provider.MODERNMT],
+        source_language="en",
+        target_language="fr",
+    )
+    request = TranslationRequest(text="I love this product!")
+    response = translate_modernmt_client.request(request)
+
+    assert response is not None
+    assert isinstance(response.text, str)
+    assert len(response.text) > 0
+    assert response.text != request.text
+
+    print_request_and_response(request, response, provider=Provider.MODERNMT)

@@ -1,12 +1,15 @@
 import os
 import requests
 
-from pydantic import BaseModel, Field
-from typing import Dict, List, Optional
+from pydantic import BaseModel
+from typing import List
 
 from supercontrast.provider.provider_enum import Provider
 from supercontrast.provider.provider_handler import ProviderHandler
-from supercontrast.task import OCRRequest, OCRResponse, Task
+from supercontrast.task import OCRBoundingBox, OCRRequest, OCRResponse, Task
+from supercontrast.utils.image import load_image_data
+
+# Task.OCR
 
 
 class Point(BaseModel):
@@ -20,7 +23,7 @@ class TextSegment(BaseModel):
     points: List[Point]
 
 
-class OCRResult(BaseModel):
+class SentisightOCRResult(BaseModel):
     segments: List[TextSegment]
 
 
@@ -32,16 +35,7 @@ class SentisightOCR(ProviderHandler):
         self.base_url = "https://platform.sentisight.ai/api/pm-predict/"
 
     def request(self, request: OCRRequest) -> OCRResponse:
-        if isinstance(request.image, str):
-            if request.image.startswith("http") or request.image.startswith("https"):
-                image_data = requests.get(request.image).content
-            else:
-                with open(request.image, "rb") as file_:
-                    image_data = file_.read()
-        elif isinstance(request.image, bytes):
-            image_data = request.image
-        else:
-            raise ValueError("Invalid image type")
+        image_data = load_image_data(request.image)
 
         url = f"{self.base_url}Text-recognition"
 
@@ -58,7 +52,7 @@ class SentisightOCR(ProviderHandler):
         if response.status_code != 200:
             raise Exception(f"Error: {response.status_code} - {response.text}")
 
-        response_data: OCRResult = OCRResult(
+        response_data: SentisightOCRResult = SentisightOCRResult(
             segments=[TextSegment(**item) for item in response.json()]
         )
 
@@ -66,7 +60,17 @@ class SentisightOCR(ProviderHandler):
         for segment in response_data.segments:
             text += segment.label + "\n"
 
-        return OCRResponse(text=text)
+        response = OCRResponse(
+            all_text=text,
+            bounding_boxes=[
+                OCRBoundingBox(
+                    text=segment.label,
+                    coordinates=[(point.x, point.y) for point in segment.points],
+                )
+                for segment in response_data.segments
+            ],
+        )
+        return response
 
     def get_name(self) -> str:
         return "Sentisight OCR"

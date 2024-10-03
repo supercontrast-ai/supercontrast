@@ -12,4 +12,8 @@ class TaskHandler(ABC):
 
     @abstractmethod
     def request(self, *args, **kwargs):
-        raise NotImplementedError("Subclass must implement abstract method")
+        raise NotImplementedError("TaskHandler must implement request method")
+
+    @abstractmethod
+    def evaluate(self, *args, **kwargs):
+        raise NotImplementedError("TaskHandler must implement evaluate method")

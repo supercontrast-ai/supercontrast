@@ -1,6 +1,7 @@
-import requests
 import os
-from typing import Dict, Any, List, Optional
+import requests
+
+from typing import Any, Dict, List, Optional
 
 from supercontrast.provider.provider_enum import Provider
 from supercontrast.provider.provider_handler import ProviderHandler
@@ -14,7 +15,7 @@ class ModernMTTranslation(ProviderHandler):
         self.__headers = {
             "MMT-ApiKey": api_key,
             "MMT-Platform": "modernmt-python",
-            "MMT-PlatformVersion": "1.5.2"
+            "MMT-PlatformVersion": "1.5.2",
         }
         self.source_language = source_language
         self.target_language = target_language
@@ -23,7 +24,7 @@ class ModernMTTranslation(ProviderHandler):
         data = {
             "source": self.source_language,
             "target": self.target_language,
-            "q": request.text
+            "q": request.text,
         }
 
         response = self.__send("get", "/translate", data=data)
@@ -38,7 +39,9 @@ class ModernMTTranslation(ProviderHandler):
     def get_name(self) -> str:
         return "ModernMT Translation"
 
-    def __send(self, method: str, endpoint: str, data: Optional[Dict[str, Any]] = None) -> Any:
+    def __send(
+        self, method: str, endpoint: str, data: Optional[Dict[str, Any]] = None
+    ) -> Any:
         url = self.__base_url + endpoint
 
         headers = self.__headers.copy()
@@ -52,7 +55,9 @@ class ModernMTTranslation(ProviderHandler):
         return r.json()["data"]
 
     @classmethod
-    def init_from_env(cls, source_language: str, target_language: str) -> "ModernMTTranslation":
+    def init_from_env(
+        cls, source_language: str, target_language: str
+    ) -> "ModernMTTranslation":
         api_key = os.environ.get("MODERN_MT_API_KEY")
         if not api_key:
             raise EnvironmentError("MODERNMT_API_KEY environment variable is not set")

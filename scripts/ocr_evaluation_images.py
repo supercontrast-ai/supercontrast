@@ -18,14 +18,10 @@ def plot_bounding_boxes(
     response = requests.get(image_url)
     img = Image.open(io.BytesIO(response.content))
 
-    # Create a figure with subplots for each provider
-    fig, axs = plt.subplots(2, 2, figsize=(20, 20))
-    fig.suptitle("OCR Bounding Boxes Comparison", fontsize=16)
-
-    for idx, (provider, ocr_response) in enumerate(responses.items()):
-        ax = axs[idx // 2, idx % 2]
+    for provider, ocr_response in responses.items():
+        # Create a new figure for each provider
+        fig, ax = plt.subplots(figsize=(10, 10))
         ax.imshow(img)
-        ax.set_title(f"Provider: {provider.value}")
 
         for box in ocr_response.bounding_boxes:
             # Create a Rectangle patch
@@ -42,23 +38,32 @@ def plot_bounding_boxes(
 
         ax.axis("off")
 
-    plt.tight_layout()
+        # Remove any extra white space around the image
+        plt.tight_layout(pad=0)
+        plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
 
-    # Save the plot as an image file
-    os.makedirs(output_dir, exist_ok=True)
-    image_name = os.path.basename(image_url)
-    output_path = os.path.join(output_dir, f"ocr_comparison_{image_name}.png")
-    plt.savefig(output_path, dpi=300, bbox_inches="tight")
-    print(f"Saved comparison plot to: {output_path}")
+        # Save the plot as an image file
+        os.makedirs(output_dir, exist_ok=True)
+        image_name = os.path.basename(image_url)
+        output_path = os.path.join(output_dir, f"ocr_{provider.value}_{image_name}")
+        plt.savefig(output_path, dpi=300, bbox_inches="tight", pad_inches=0)
+        print(f"Saved {provider.value} plot to: {output_path}")
 
-    plt.show()
+        plt.close(fig)
 
 
 def main():
     # Initialize the OCR client with all providers
     ocr_client = supercontrast_client(
         task=Task.OCR,
-        providers=[Provider.AWS, Provider.GCP, Provider.AZURE, Provider.SENTISIGHT],
+        providers=[
+            Provider.AWS,
+            Provider.GCP,
+            Provider.AZURE,
+            Provider.SENTISIGHT,
+            Provider.CLARIFAI,
+            Provider.API4AI,
+        ],
     )
 
     # List of image URLs to evaluate
@@ -68,7 +73,7 @@ def main():
     ]
 
     # Output directory for saving plots
-    output_dir = "test_data"
+    output_dir = "test_data/ocr"
 
     for image_url in image_urls:
         print(f"Evaluating image: {image_url}")
@@ -79,7 +84,7 @@ def main():
         # Evaluate all providers
         responses = ocr_client.evaluate(request)
 
-        # Plot bounding boxes and save the plot
+        # Plot bounding boxes and save individual plots
         plot_bounding_boxes(image_url, responses, output_dir)
 
         # Print text results

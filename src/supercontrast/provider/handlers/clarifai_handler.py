@@ -1,12 +1,17 @@
 import os
 import requests
 
+from io import BytesIO
+from PIL import Image
 from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import List
 
 from supercontrast.provider.provider_enum import Provider
 from supercontrast.provider.provider_handler import ProviderHandler
-from supercontrast.task import OCRRequest, OCRResponse, Task
+from supercontrast.task import OCRBoundingBox, OCRRequest, OCRResponse, Task
+from supercontrast.utils.image import get_image_size, load_image_data
+
+# Task.OCR
 
 
 class TextInfo(BaseModel):
@@ -63,6 +68,20 @@ class ClarifaiOCR(ProviderHandler):
         self.api_key = api_key
         self.base_url = f"https://api.clarifai.com/v2/users/clarifai/apps/main/models/{self.model_name}/versions/{self.model_version}/outputs"
 
+    def get_image_size(self, image):
+        if isinstance(image, str):
+            if image.startswith(("http://", "https://")):
+                response = requests.get(image)
+                img = Image.open(BytesIO(response.content))
+            else:
+                img = Image.open(image)
+        elif isinstance(image, bytes):
+            img = Image.open(BytesIO(image))
+        else:
+            raise ValueError("Unsupported image type")
+
+        return img.size
+
     def request(self, request: OCRRequest) -> OCRResponse:
         headers = {
             "Authorization": f"Key {self.api_key}",
@@ -74,9 +93,11 @@ class ClarifaiOCR(ProviderHandler):
                 {
                     "data": {
                         "image": {
-                            "url": request.image
-                            if isinstance(request.image, str)
-                            else None
+                            "url": (
+                                request.image
+                                if isinstance(request.image, str)
+                                else None
+                            )
                         }
                     }
                 }
@@ -88,16 +109,43 @@ class ClarifaiOCR(ProviderHandler):
 
         result = response.json()
         parsed_response = ClarifaiResponse(**result)
-        text = self.extract_text(parsed_response)
-        return OCRResponse(text=text)
 
-    def extract_text(self, response: ClarifaiResponse) -> str:
+        # Get image size
+        image_size = get_image_size(request.image)
+
         text_parts = []
-        for output in response.outputs:
+        bounding_boxes = []
+        for output in parsed_response.outputs:
             for region in output.regions:
                 if "text" in region.data and "raw" in region.data["text"]:
-                    text_parts.append(region.data["text"]["raw"])
-        return " ".join(text_parts)
+                    text = region.data["text"]["raw"]
+                    text_parts.append(text)
+                    bbox = region.region_info.bounding_box
+                    coordinates = [
+                        (
+                            int(bbox.left_col * image_size[0]),
+                            int(bbox.top_row * image_size[1]),
+                        ),
+                        (
+                            int(bbox.right_col * image_size[0]),
+                            int(bbox.top_row * image_size[1]),
+                        ),
+                        (
+                            int(bbox.right_col * image_size[0]),
+                            int(bbox.bottom_row * image_size[1]),
+                        ),
+                        (
+                            int(bbox.left_col * image_size[0]),
+                            int(bbox.bottom_row * image_size[1]),
+                        ),
+                    ]
+                    bounding_boxes.append(
+                        OCRBoundingBox(text=text, coordinates=coordinates)
+                    )
+
+        all_text = " ".join(text_parts)
+        response = OCRResponse(all_text=all_text, bounding_boxes=bounding_boxes)
+        return response
 
     def get_name(self) -> str:
         return "Clarifai - OCR"
@@ -105,6 +153,9 @@ class ClarifaiOCR(ProviderHandler):
     @classmethod
     def init_from_env(cls, api_key) -> "ClarifaiOCR":
         return cls(api_key)
+
+
+# factory
 
 
 def clarifai_provider_factory(task: Task, **config) -> ProviderHandler:

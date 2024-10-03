@@ -7,6 +7,7 @@ from typing import List
 from supercontrast.provider.provider_enum import Provider
 from supercontrast.provider.provider_handler import ProviderHandler
 from supercontrast.task import OCRBoundingBox, OCRRequest, OCRResponse, Task
+from supercontrast.utils.image import load_image_data
 
 # Task.OCR
 
@@ -34,16 +35,7 @@ class SentisightOCR(ProviderHandler):
         self.base_url = "https://platform.sentisight.ai/api/pm-predict/"
 
     def request(self, request: OCRRequest) -> OCRResponse:
-        if isinstance(request.image, str):
-            if request.image.startswith("http") or request.image.startswith("https"):
-                image_data = requests.get(request.image).content
-            else:
-                with open(request.image, "rb") as file_:
-                    image_data = file_.read()
-        elif isinstance(request.image, bytes):
-            image_data = request.image
-        else:
-            raise ValueError("Invalid image type")
+        image_data = load_image_data(request.image)
 
         url = f"{self.base_url}Text-recognition"
 

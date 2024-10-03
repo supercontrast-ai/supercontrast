@@ -71,3 +71,31 @@ def test_ocr_sentisight():
     assert len(response.bounding_boxes) > 0
 
     print_request_and_response(request, response, provider=Provider.SENTISIGHT)
+
+
+def test_ocr_api4ai():
+    ocr_api4ai_client = supercontrast_client(task=Task.OCR, providers=[Provider.API4AI])
+    request = OCRRequest(image="https://jeroen.github.io/images/testocr.png")
+    response = ocr_api4ai_client.request(request)
+
+    assert response is not None
+    assert isinstance(response.all_text, str)
+    assert len(response.all_text) > 0
+    assert len(response.bounding_boxes) > 0
+
+    print_request_and_response(request, response, provider=Provider.API4AI)
+
+
+def test_ocr_clarifai():
+    ocr_clarifai_client = supercontrast_client(
+        task=Task.OCR, providers=[Provider.CLARIFAI]
+    )
+    request = OCRRequest(image="https://jeroen.github.io/images/testocr.png")
+    response = ocr_clarifai_client.request(request)
+
+    assert response is not None
+    assert isinstance(response.all_text, str)
+    assert len(response.all_text) > 0
+    assert len(response.bounding_boxes) > 0
+
+    print_request_and_response(request, response, provider=Provider.CLARIFAI)

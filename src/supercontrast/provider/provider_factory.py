@@ -12,17 +12,22 @@ from supercontrast.task.task_enum import Task
 
 
 def provider_factory(task: Task, provider: Provider, **config) -> ProviderHandler:
+    # major providers
     if provider == Provider.AWS:
         return aws_provider_factory(task, **config)
     elif provider == Provider.GCP:
         return gcp_provider_factory(task, **config)
     elif provider == Provider.AZURE:
         return azure_provider_factory(task, **config)
+
+    # ocr providers
     elif provider == Provider.SENTISIGHT:
         return sentisight_provider_factory(task, **config)
     elif provider == Provider.API4AI:
         return api4ai_provider_factory(task, **config)
     elif provider == Provider.CLARIFAI:
         return clarifai_provider_factory(task, **config)
+
+    # unsupported provider
     else:
         raise ValueError(f"Unsupported provider: {provider}")

@@ -15,6 +15,7 @@ from supercontrast.task import (
     TranslationRequest,
     TranslationResponse,
 )
+from supercontrast.utils.image import load_image_data
 
 # Task.SENTIMENT_ANALYSIS
 
@@ -100,17 +101,8 @@ class GCPOCR(ProviderHandler):
         self.client = vision_v1.ImageAnnotatorClient(credentials=credentials)
 
     def request(self, request: OCRRequest) -> OCRResponse:
-        if isinstance(request.image, str):
-            if request.image.startswith(("http://", "https://")):
-                image = vision_v1.Image(
-                    source=vision_v1.ImageSource(image_uri=request.image)
-                )
-            else:
-                with open(request.image, "rb") as image_file:
-                    content = image_file.read()
-                image = vision_v1.Image(content=content)
-        else:
-            image = vision_v1.Image(content=request.image)
+        image_data = load_image_data(request.image)
+        image = vision_v1.Image(content=image_data)
 
         response = self.client.document_text_detection(image=image)  # type: ignore
 

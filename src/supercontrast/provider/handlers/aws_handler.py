@@ -1,8 +1,4 @@
 import boto3
-import io
-import requests
-
-from PIL import Image
 
 from supercontrast.provider.provider_enum import Provider
 from supercontrast.provider.provider_handler import ProviderHandler
@@ -16,6 +12,7 @@ from supercontrast.task import (
     TranslationRequest,
     TranslationResponse,
 )
+from supercontrast.utils.image import get_image_size, load_image_data
 from supercontrast.utils.text import truncate_text
 
 # Task.SENTIMENT_ANALYSIS
@@ -128,18 +125,10 @@ class AWSOCR(ProviderHandler):
         )
 
     def request(self, request: OCRRequest) -> OCRResponse:
-        if isinstance(request.image, str):
-            if request.image.startswith(("http://", "https://")):
-                image_data = requests.get(request.image).content
-            else:
-                with open(request.image, "rb") as image_file:
-                    image_data = image_file.read()
-        else:
-            image_data = request.image
+        image_data = load_image_data(request.image)
 
         # Get image dimensions
-        with Image.open(io.BytesIO(image_data)) as img:
-            width, height = img.size
+        width, height = get_image_size(request.image)
 
         response = self.client.analyze_document(
             Document={"Bytes": image_data}, FeatureTypes=["FORMS", "TABLES"]

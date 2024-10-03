@@ -1,12 +1,15 @@
 import os
 import requests
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from typing import Dict, List
 
 from supercontrast.provider.provider_enum import Provider
 from supercontrast.provider.provider_handler import ProviderHandler
-from supercontrast.task import OCRRequest, OCRResponse, Task
+from supercontrast.task import OCRBoundingBox, OCRRequest, OCRResponse, Task
+from supercontrast.utils.image import load_image_data
+
+# Task.OCR
 
 
 class Point(BaseModel):
@@ -58,17 +61,7 @@ class API4AIOCR(ProviderHandler):
         self.headers = {"X-RapidAPI-Key": self.key}
 
     def request(self, request: OCRRequest) -> OCRResponse:
-        if isinstance(request.image, str):
-            if request.image.startswith("http") or request.image.startswith("https"):
-                image_data = requests.get(request.image).content
-            else:
-                with open(request.image, "rb") as file_:
-                    image_data = file_.read()
-        elif isinstance(request.image, bytes):
-            image_data = request.image
-        else:
-            raise ValueError("Invalid image type")
-
+        image_data = load_image_data(request.image)
         files = {"image": image_data}
 
         response = requests.post(url=self.url, files=files, headers=self.headers)
@@ -79,14 +72,36 @@ class API4AIOCR(ProviderHandler):
         response_json = response.json()
         response_data = OCRResult(**response_json)
 
-        text = ""
+        all_text = ""
+        bounding_boxes = []
         for result in response_data.results:
             for entity in result.entities:
                 for object in entity.objects:
                     for entity in object.entities:
-                        text += entity.text
+                        all_text += entity.text + " "
+                        coordinates = [
+                            (
+                                int(object.box[0] * result.width),
+                                int(object.box[1] * result.height),
+                            ),
+                            (
+                                int(object.box[2] * result.width),
+                                int(object.box[1] * result.height),
+                            ),
+                            (
+                                int(object.box[2] * result.width),
+                                int(object.box[3] * result.height),
+                            ),
+                            (
+                                int(object.box[0] * result.width),
+                                int(object.box[3] * result.height),
+                            ),
+                        ]
+                        bounding_boxes.append(
+                            OCRBoundingBox(text=entity.text, coordinates=coordinates)
+                        )
 
-        return OCRResponse(text=text)
+        return OCRResponse(all_text=all_text.strip(), bounding_boxes=bounding_boxes)
 
     def get_name(self) -> str:
         return "API4AI OCR"
@@ -97,6 +112,9 @@ class API4AIOCR(ProviderHandler):
         if not api_key:
             raise ValueError("API4AI_API_KEY is not set")
         return cls(api_key)
+
+
+# factory
 
 
 def api4ai_provider_factory(task: Task, **config) -> ProviderHandler:

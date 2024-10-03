@@ -21,6 +21,7 @@ from supercontrast.task import (
     TranslationRequest,
     TranslationResponse,
 )
+from supercontrast.utils.image import get_image_size, load_image_data
 
 # Task.SENTIMENT_ANALYSIS
 
@@ -101,16 +102,8 @@ class AzureOCR(ProviderHandler):
         self.client = ComputerVisionClient(endpoint, CognitiveServicesCredentials(key))
 
     def request(self, request: OCRRequest) -> OCRResponse:
-        if isinstance(request.image, str):
-            if request.image.startswith(("http://", "https://")):
-                read_response = self.client.read(request.image, raw=True)
-            else:
-                with open(request.image, "rb") as image_file:
-                    read_response = self.client.read_in_stream(image_file, raw=True)
-        else:
-            read_response = self.client.read_in_stream(
-                io.BytesIO(request.image), raw=True
-            )
+        image_data = load_image_data(request.image)
+        read_response = self.client.read_in_stream(io.BytesIO(image_data), raw=True)
 
         if not read_response:
             raise ValueError("Failed to read image")

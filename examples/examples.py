@@ -72,3 +72,15 @@ input_image = "https://jeroen.github.io/images/testocr.png"
 request = OCRRequest(image=input_image)
 response = client.request(request)
 print_response("Clarifai", Task.OCR, input_image, response)
+
+
+client = supercontrast_client(
+    task=Task.TRANSLATION,
+    providers=[Provider.MODERNMT],
+    optimizer=None,
+    source_language="en",
+    target_language="fr",
+)
+input_text = "I love this product!"
+response = client.request(TranslationRequest(text=input_text))
+print_response("ModernMT", Task.TRANSLATION, input_text, response)

@@ -11,3 +11,4 @@ class Provider(Enum):
     SENTISIGHT = "sentisight"
     API4AI = "api4ai"
     CLARIFAI = "clarifai"
+    MODERNMT = "modernmt"

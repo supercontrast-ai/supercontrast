@@ -10,6 +10,28 @@ from supercontrast.client import supercontrast_client
 from supercontrast.provider import Provider
 from supercontrast.task import OCRRequest, OCRResponse, Task
 
+# Define providers
+
+PROVIDERS = [
+    Provider.AWS,
+    Provider.GCP,
+    Provider.AZURE,
+    Provider.SENTISIGHT,
+    Provider.CLARIFAI,
+    Provider.API4AI,
+]
+
+# Define image URLs to evaluate
+
+IMAGE_URLS = [
+    "https://jeroen.github.io/images/testocr.png",
+    # Add more image URLs here
+]
+
+# Define output directory for saving plots
+
+OUTPUT_DIR = "test_data/ocr"
+
 
 def plot_bounding_boxes(
     image_url: str, responses: dict[Provider, OCRResponse], output_dir: str
@@ -56,26 +78,10 @@ def main():
     # Initialize the OCR client with all providers
     ocr_client = supercontrast_client(
         task=Task.OCR,
-        providers=[
-            Provider.AWS,
-            Provider.GCP,
-            Provider.AZURE,
-            Provider.SENTISIGHT,
-            Provider.CLARIFAI,
-            Provider.API4AI,
-        ],
+        providers=PROVIDERS,
     )
 
-    # List of image URLs to evaluate
-    image_urls = [
-        "https://jeroen.github.io/images/testocr.png",
-        # Add more image URLs here
-    ]
-
-    # Output directory for saving plots
-    output_dir = "test_data/ocr"
-
-    for image_url in image_urls:
+    for image_url in IMAGE_URLS:
         print(f"Evaluating image: {image_url}")
 
         # Create OCR request
@@ -85,7 +91,7 @@ def main():
         responses = ocr_client.evaluate(request)
 
         # Plot bounding boxes and save individual plots
-        plot_bounding_boxes(image_url, responses, output_dir)
+        plot_bounding_boxes(image_url, responses, OUTPUT_DIR)
 
         # Print text results
         for provider, response in responses.items():

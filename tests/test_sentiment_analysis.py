@@ -20,12 +20,28 @@ def print_request_and_response(
 
 # tests
 
+TEST_TEXT = "I love programming in Python!"
+
+
+def test_sentiment_analysis_anthropic():
+    sentiment_analysis_anthropic_client = supercontrast_client(
+        task=Task.SENTIMENT_ANALYSIS, providers=[Provider.ANTHROPIC]
+    )
+    request = SentimentAnalysisRequest(text=TEST_TEXT)
+    response = sentiment_analysis_anthropic_client.request(request)
+
+    assert response is not None
+    assert isinstance(response.score, float)
+    assert response.score > 0
+
+    print_request_and_response(request, response, provider=Provider.ANTHROPIC)
+
 
 def test_sentiment_analysis_aws():
     sentiment_analysis_aws_client = supercontrast_client(
         task=Task.SENTIMENT_ANALYSIS, providers=[Provider.AWS]
     )
-    request = SentimentAnalysisRequest(text="I love programming in Python!")
+    request = SentimentAnalysisRequest(text=TEST_TEXT)
     response = sentiment_analysis_aws_client.request(request)
 
     assert response is not None
@@ -39,7 +55,7 @@ def test_sentiment_analysis_azure():
     sentiment_analysis_azure_client = supercontrast_client(
         task=Task.SENTIMENT_ANALYSIS, providers=[Provider.AZURE]
     )
-    request = SentimentAnalysisRequest(text="I love programming in Python!")
+    request = SentimentAnalysisRequest(text=TEST_TEXT)
     response = sentiment_analysis_azure_client.request(request)
 
     assert response is not None
@@ -53,7 +69,7 @@ def test_sentiment_analysis_gcp():
     sentiment_analysis_gcp_client = supercontrast_client(
         task=Task.SENTIMENT_ANALYSIS, providers=[Provider.GCP]
     )
-    request = SentimentAnalysisRequest(text="I love programming in Python!")
+    request = SentimentAnalysisRequest(text=TEST_TEXT)
     response = sentiment_analysis_gcp_client.request(request)
 
     assert response is not None
@@ -61,3 +77,17 @@ def test_sentiment_analysis_gcp():
     assert response.score > 0
 
     print_request_and_response(request, response, provider=Provider.GCP)
+
+
+def test_sentiment_analysis_openai():
+    sentiment_analysis_openai_client = supercontrast_client(
+        task=Task.SENTIMENT_ANALYSIS, providers=[Provider.OPENAI]
+    )
+    request = SentimentAnalysisRequest(text=TEST_TEXT)
+    response = sentiment_analysis_openai_client.request(request)
+
+    assert response is not None
+    assert isinstance(response.score, float)
+    assert response.score > 0
+
+    print_request_and_response(request, response, provider=Provider.OPENAI)

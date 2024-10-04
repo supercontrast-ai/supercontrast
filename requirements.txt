@@ -31,3 +31,8 @@ azure-ai-textanalytics
 azure-cognitiveservices-vision-computervision
 azure-ai-translation-text
 azure-core
+
+# llm
+langchain
+langchain_anthropic
+langchain_openai

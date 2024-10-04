@@ -19,6 +19,7 @@ PROVIDERS = [
     Provider.SENTISIGHT,
     Provider.CLARIFAI,
     Provider.API4AI,
+    # Provider.OPENAI,
 ]
 
 # Define image URLs to evaluate

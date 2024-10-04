@@ -1,3 +1,5 @@
+import base64
+import os
 import requests
 
 from io import BytesIO
@@ -55,3 +57,34 @@ def load_image_data(image: Union[str, bytes]) -> bytes:
         return image
     else:
         raise ValueError("Unsupported image type")
+
+
+# Image processing for LLMs
+
+
+def encode_image(image_data: bytes) -> str:
+    return base64.b64encode(image_data).decode("utf-8")
+
+
+def convert_to_jpeg_and_resize(image_data: bytes, max_size: int = 1024) -> bytes | None:
+    try:
+        with Image.open(BytesIO(image_data)) as img:
+            if img.mode != "RGB":
+                img = img.convert("RGB")
+            original_width, original_height = img.size
+            ratio = min(max_size / original_width, max_size / original_height)
+            new_size = (int(original_width * ratio), int(original_height * ratio))
+            img = img.resize(new_size)
+            output_buffer = BytesIO()
+            img.save(output_buffer, format="JPEG")
+            return output_buffer.getvalue()
+    except IOError:
+        print("Error in converting the image to JPEG")
+        return None
+
+
+def process_image_for_llm(image_data: bytes) -> str | None:
+    jpeg_data = convert_to_jpeg_and_resize(image_data)
+    if jpeg_data is None:
+        return None
+    return encode_image(jpeg_data)

@@ -8,11 +8,19 @@ from langchain_openai import ChatOpenAI
 from supercontrast.provider.provider_enum import Provider
 from supercontrast.provider.provider_handler import ProviderHandler
 from supercontrast.task import (
+    OCRBoundingBox,
+    OCRRequest,
+    OCRResponse,
     SentimentAnalysisRequest,
     SentimentAnalysisResponse,
     Task,
     TranslationRequest,
     TranslationResponse,
+)
+from supercontrast.utils.image import (
+    get_image_size,
+    load_image_data,
+    process_image_for_llm,
 )
 from supercontrast.utils.text import truncate_text
 
@@ -124,6 +132,77 @@ class OpenAITranslate(ProviderHandler):
         return cls(source_language, target_language)
 
 
+# Task.OCR
+
+
+class OCROutput(pydantic.BaseModel):
+    text: str = pydantic.Field(description="Extracted text from the image")
+    bounding_boxes: list[dict] = pydantic.Field(
+        description="List of bounding boxes for each detected text"
+    )
+
+
+OCR_PROMPT = PromptTemplate(
+    template="Perform OCR on the following image. Extract all visible text and provide bounding boxes for each text element. Respond with the extracted text and a list of bounding boxes:\n\n{image}\n\n{format_instructions}",
+    input_variables=["image"],
+    partial_variables={
+        "format_instructions": PydanticOutputParser(
+            pydantic_object=OCROutput
+        ).get_format_instructions()
+    },
+)
+
+
+class OpenAIOCR(ProviderHandler):
+    def __init__(self):
+        super().__init__(provider=Provider.OPENAI, task=Task.OCR)
+        model = ChatOpenAI(
+            **{
+                "temperature": 0,
+                "model_name": OPENAI_MODEL_NAME,
+            }
+        ).bind(response_format={"type": "json_object"})
+        parser = PydanticOutputParser(pydantic_object=OCROutput)
+        self.generator = OCR_PROMPT | model | parser
+
+    def request(self, request: OCRRequest) -> OCRResponse:
+        image_data = load_image_data(request.image)
+        processed_image = process_image_for_llm(image_data)
+        if processed_image is None:
+            raise ValueError("Failed to process the image")
+
+        width, height = get_image_size(image_data)
+
+        result: OCROutput = self.generator.invoke(
+            {"image": f"data:image/jpeg;base64,{processed_image}"}
+        )
+
+        bounding_boxes = [
+            OCRBoundingBox(
+                text=box["text"],
+                coordinates=[
+                    (int(box["x1"] * width), int(box["y1"] * height)),
+                    (int(box["x2"] * width), int(box["y2"] * height)),
+                    (int(box["x3"] * width), int(box["y3"] * height)),
+                    (int(box["x4"] * width), int(box["y4"] * height)),
+                ],
+            )
+            for box in result.bounding_boxes
+        ]
+
+        return OCRResponse(all_text=result.text, bounding_boxes=bounding_boxes)
+
+    def get_name(self) -> str:
+        return "OpenAI - OCR"
+
+    @classmethod
+    def init_from_env(cls) -> "OpenAIOCR":
+        api_key = os.environ.get("OPENAI_API_KEY")
+        if not api_key:
+            raise ValueError("OPENAI_API_KEY environment variable is not set")
+        return cls()
+
+
 # factory
 
 
@@ -134,5 +213,7 @@ def openai_provider_factory(task: Task, **config) -> ProviderHandler:
         source_language = config.get("source_language", "en")
         target_language = config.get("target_language", "es")
         return OpenAITranslate.init_from_env(source_language, target_language)
+    elif task == Task.OCR:
+        return OpenAIOCR.init_from_env()
     else:
         raise ValueError(f"Unsupported task: {task}")

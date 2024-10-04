@@ -31,6 +31,8 @@ TARGET_LANGUAGE = (
     "es"  # Spanish, but you can change this to any desired target language
 )
 
+# Define the evaluation function
+
 
 def evaluate_translation():
     # Initialize the client with all providers

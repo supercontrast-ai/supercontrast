@@ -24,6 +24,8 @@ PROVIDERS = [
     Provider.OPENAI,
 ]
 
+# Define the evaluation function
+
 
 def evaluate_sentiment_analysis():
     # Initialize the client with all providers

@@ -5,6 +5,10 @@ from supercontrast.task.types.sentiment_analysis_types import (
     SentimentAnalysisRequest,
     SentimentAnalysisResponse,
 )
+from supercontrast.task.types.transcription_types import (
+    TranscriptionRequest,
+    TranscriptionResponse,
+)
 from supercontrast.task.types.translation_types import (
     TranslationRequest,
     TranslationResponse,

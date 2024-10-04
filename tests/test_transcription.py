@@ -4,9 +4,9 @@ from supercontrast.task import Task, TranscriptionRequest, TranscriptionResponse
 
 # constants
 
-TEST_AUDIO_FILE = "test_data/test_audio.wav"
+TEST_AUDIO_URL = "https://github.com/voxserv/audio_quality_testing_samples/raw/master/mono_44100/127389__acclivity__thetimehascome.wav"
 
-# helper function
+# helper functions
 
 
 def print_request_and_response(
@@ -23,11 +23,11 @@ def print_request_and_response(
 # tests
 
 
-def test_transcription_azure():
+def test_azure_transcription():
     transcription_azure_client = supercontrast_client(
         task=Task.TRANSCRIPTION, providers=[Provider.AZURE]
     )
-    request = TranscriptionRequest(audio_file=TEST_AUDIO_FILE)
+    request = TranscriptionRequest(audio_file=TEST_AUDIO_URL)
     response = transcription_azure_client.request(request)
 
     assert response is not None
@@ -37,11 +37,11 @@ def test_transcription_azure():
     print_request_and_response(request, response, provider=Provider.AZURE)
 
 
-def test_transcription_openai():
+def test_openai_transcription():
     transcription_openai_client = supercontrast_client(
         task=Task.TRANSCRIPTION, providers=[Provider.OPENAI]
     )
-    request = TranscriptionRequest(audio_file=TEST_AUDIO_FILE)
+    request = TranscriptionRequest(audio_file=TEST_AUDIO_URL)
     response = transcription_openai_client.request(request)
 
     assert response is not None

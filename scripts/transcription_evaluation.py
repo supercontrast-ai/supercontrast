@@ -3,15 +3,17 @@ import json
 from supercontrast.client import supercontrast_client
 from supercontrast.provider import Provider
 from supercontrast.task import Task, TranscriptionRequest
+from supercontrast.utils.audio import convert_to_mp3
 
 # Define test audio file
 
+RAW_AUDIO_FILE = "test_data/test_audio.m4a"
 TEST_AUDIO_FILE = "test_data/test_audio.wav"
 
 # Define providers
 
 PROVIDERS = [
-    Provider.AZURE,
+    # Provider.AZURE,
     Provider.OPENAI,
 ]
 
@@ -42,4 +44,5 @@ def evaluate_transcription():
 
 
 if __name__ == "__main__":
+    # convert_to_mp3(RAW_AUDIO_FILE, TEST_AUDIO_FILE)
     evaluate_transcription()

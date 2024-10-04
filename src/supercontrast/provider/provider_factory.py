@@ -4,6 +4,7 @@ from supercontrast.provider.handlers.azure_handler import azure_provider_factory
 from supercontrast.provider.handlers.clarifai_handler import clarifai_provider_factory
 from supercontrast.provider.handlers.gcp_handler import gcp_provider_factory
 from supercontrast.provider.handlers.modern_mt_handler import modernmt_provider_factory
+from supercontrast.provider.handlers.oai_handler import openai_provider_factory
 from supercontrast.provider.handlers.sentisight_handler import (
     sentisight_provider_factory,
 )
@@ -13,15 +14,12 @@ from supercontrast.task.task_enum import Task
 
 
 def provider_factory(task: Task, provider: Provider, **config) -> ProviderHandler:
-    # major providers
     if provider == Provider.AWS:
         return aws_provider_factory(task, **config)
     elif provider == Provider.GCP:
         return gcp_provider_factory(task, **config)
     elif provider == Provider.AZURE:
         return azure_provider_factory(task, **config)
-
-    # ocr providers
     elif provider == Provider.SENTISIGHT:
         return sentisight_provider_factory(task, **config)
     elif provider == Provider.API4AI:
@@ -30,5 +28,7 @@ def provider_factory(task: Task, provider: Provider, **config) -> ProviderHandle
         return clarifai_provider_factory(task, **config)
     elif provider == Provider.MODERNMT:
         return modernmt_provider_factory(task, **config)
+    elif provider == Provider.OPENAI:
+        return openai_provider_factory(task, **config)
     else:
         raise ValueError(f"Unsupported provider: {provider}")

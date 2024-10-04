@@ -6,9 +6,8 @@ class Provider(Enum):
     AWS = "aws"
     GCP = "gcp"
     AZURE = "azure"
-
-    # ocr providers
     SENTISIGHT = "sentisight"
     API4AI = "api4ai"
     CLARIFAI = "clarifai"
     MODERNMT = "modernmt"
+    OPENAI = "openai"

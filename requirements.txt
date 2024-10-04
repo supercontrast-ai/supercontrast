@@ -9,6 +9,11 @@ isort
 # Testing
 pytest
 
+# Langchain
+langchain
+langchain_anthropic
+langchain_openai
+
 # Amazon Web Services
 boto3
 
@@ -25,9 +30,18 @@ google-cloud-language
 google-cloud-translate
 google-cloud-vision
 
+# Langchain
+langchain
+langchain_anthropic
+langchain_openai
+
 # Microsoft Azure
 msrest
 azure-ai-textanalytics
 azure-cognitiveservices-vision-computervision
 azure-ai-translation-text
 azure-core
+azure-cognitiveservices-speech
+
+# OpenAI
+openai

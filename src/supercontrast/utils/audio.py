@@ -11,7 +11,9 @@ def load_audio_file(audio_file: str) -> str:
         # Extract the file extension from the URL
         file_extension = os.path.splitext(audio_file)[1]
 
-        with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
+        with tempfile.NamedTemporaryFile(
+            delete=False, suffix=file_extension
+        ) as temp_file:
             temp_file.write(response.content)
             temp_file_path = temp_file.name
 

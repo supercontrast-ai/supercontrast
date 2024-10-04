@@ -1,3 +1,4 @@
+import azure.cognitiveservices.speech as speechsdk
 import io
 import os
 import time
@@ -21,6 +22,11 @@ from supercontrast.task import (
     TranslationRequest,
     TranslationResponse,
 )
+from supercontrast.task.types.transcription_types import (
+    TranscriptionRequest,
+    TranscriptionResponse,
+)
+from supercontrast.utils.audio import load_audio_file
 from supercontrast.utils.image import get_image_size, load_image_data
 
 # Task.SENTIMENT_ANALYSIS
@@ -159,6 +165,70 @@ class AzureOCR(ProviderHandler):
         return cls(endpoint, key)
 
 
+# Task.TRANSCRIPTION
+
+
+class AzureTranscription(ProviderHandler):
+    def __init__(self, speech_key: str, service_region: str):
+        super().__init__(provider=Provider.AZURE, task=Task.TRANSCRIPTION)
+        self.speech_key = speech_key
+        self.service_region = service_region
+
+    def request(self, request: TranscriptionRequest) -> TranscriptionResponse:
+        audio_file_path = load_audio_file(request.audio_file)
+
+        speech_config = speechsdk.SpeechConfig(
+            subscription=self.speech_key, region=self.service_region
+        )
+        audio_config = speechsdk.audio.AudioConfig(filename=audio_file_path)
+
+        speech_recognizer = speechsdk.SpeechRecognizer(
+            speech_config=speech_config, audio_config=audio_config
+        )
+
+        complete_transcription = []
+        done = False
+
+        def recognized_cb(evt):
+            if evt.result.reason == speechsdk.ResultReason.RecognizedSpeech:
+                complete_transcription.append(evt.result.text)
+            elif evt.result.reason == speechsdk.ResultReason.NoMatch:
+                print("No speech could be recognized")
+
+        def stop_cb(evt):
+            nonlocal done
+            done = True
+
+        speech_recognizer.recognized.connect(recognized_cb)
+        speech_recognizer.session_stopped.connect(stop_cb)
+        speech_recognizer.session_started.connect(lambda evt: print("Session started"))
+
+        speech_recognizer.start_continuous_recognition()
+
+        while not done:
+            time.sleep(0.5)
+
+        speech_recognizer.stop_continuous_recognition()
+
+        if audio_file_path != request.audio_file:
+            os.unlink(audio_file_path)
+
+        return TranscriptionResponse(text=" ".join(complete_transcription))
+
+    def get_name(self) -> str:
+        return "Azure Speech Services - Transcription"
+
+    @classmethod
+    def init_from_env(
+        cls, speech_key=None, service_region=None
+    ) -> "AzureTranscription":
+        speech_key = speech_key or os.environ.get("AZURE_SPEECH_KEY")
+        service_region = service_region or os.environ.get("AZURE_SPEECH_REGION")
+        if not speech_key or not service_region:
+            raise ValueError("AZURE_SPEECH_KEY and AZURE_SPEECH_REGION must be set")
+        return cls(speech_key, service_region)
+
+
 # factory
 
 
@@ -182,5 +252,11 @@ def azure_provider_factory(task: Task, **config) -> ProviderHandler:
         endpoint = config.get("azure_vision_endpoint")
         key = config.get("azure_vision_key")
         return AzureOCR.init_from_env(endpoint=endpoint, key=key)
+    elif task == Task.TRANSCRIPTION:
+        speech_key = config.get("azure_speech_key")
+        service_region = config.get("azure_speech_region")
+        return AzureTranscription.init_from_env(
+            speech_key=speech_key, service_region=service_region
+        )
     else:
         raise ValueError(f"Unsupported task: {task}")

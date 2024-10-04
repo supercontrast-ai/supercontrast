@@ -7,6 +7,7 @@ from supercontrast.task.handlers import (
     SentimentAnalysisHandler,
     TranslationHandler,
 )
+from supercontrast.task.handlers.transcription_handler import TranscriptionHandler
 from supercontrast.task.task_enum import Task
 
 
@@ -22,5 +23,7 @@ def task_factory(
         return TranslationHandler(providers, optimizer, **config)
     elif task == Task.OCR:
         return OCRHandler(providers, optimizer, **config)
+    elif task == Task.TRANSCRIPTION:
+        return TranscriptionHandler(providers, optimizer, **config)
     else:
         raise ValueError(f"Unsupported task: {task}")

@@ -72,6 +72,7 @@ def test_translate_gcp():
 
     print_request_and_response(request, response, provider=Provider.GCP)
 
+
 def test_translate_modernmt():
     translate_modernmt_client = supercontrast_client(
         task=Task.TRANSLATION,

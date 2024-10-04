@@ -9,7 +9,6 @@ from openai import OpenAI
 from supercontrast.provider.provider_enum import Provider
 from supercontrast.provider.provider_handler import ProviderHandler
 from supercontrast.task import (
-    OCRBoundingBox,
     OCRRequest,
     OCRResponse,
     SentimentAnalysisRequest,
@@ -44,7 +43,7 @@ class SentimentAnalysisOutput(pydantic.BaseModel):
 
 
 SENTIMENT_ANALYSIS_PROMPT = PromptTemplate(
-    template="Analyze the sentiment of the following text. Respond with a single number between -1 (very negative) and 1 (very positive):\n\n{text}\n\n{format_instructions}",
+    template="Analyze the sentiment of the following text. Respond with 1 for positive, 0 for neutral, and -1 for negative:\n\n{text}\n\n{format_instructions}",
     input_variables=["text"],
     partial_variables={
         "format_instructions": PydanticOutputParser(
@@ -143,13 +142,10 @@ class OpenAITranslate(ProviderHandler):
 
 class OCROutput(pydantic.BaseModel):
     text: str = pydantic.Field(description="Extracted text from the image")
-    bounding_boxes: list[dict] = pydantic.Field(
-        description="List of bounding boxes for each detected text"
-    )
 
 
 OCR_PROMPT = PromptTemplate(
-    template="Perform OCR on the following image. Extract all visible text and provide bounding boxes for each text element. Respond with the extracted text and a list of bounding boxes:\n\n{image}\n\n{format_instructions}",
+    template="Return all text that is visible in the image:\n\n{image}\n\n{format_instructions}",
     input_variables=["image"],
     partial_variables={
         "format_instructions": PydanticOutputParser(
@@ -183,18 +179,7 @@ class OpenAIOCR(ProviderHandler):
             {"image": f"data:image/jpeg;base64,{processed_image}"}
         )
 
-        bounding_boxes = [
-            OCRBoundingBox(
-                text=box["text"],
-                coordinates=[
-                    (int(box["x1"] * width), int(box["y1"] * height)),
-                    (int(box["x2"] * width), int(box["y2"] * height)),
-                    (int(box["x3"] * width), int(box["y3"] * height)),
-                    (int(box["x4"] * width), int(box["y4"] * height)),
-                ],
-            )
-            for box in result.bounding_boxes
-        ]
+        bounding_boxes = []
 
         return OCRResponse(all_text=result.text, bounding_boxes=bounding_boxes)
 

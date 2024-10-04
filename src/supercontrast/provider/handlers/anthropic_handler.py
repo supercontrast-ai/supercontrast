@@ -4,7 +4,6 @@ import pydantic
 from langchain.output_parsers import OutputFixingParser, PydanticOutputParser
 from langchain.prompts import PromptTemplate
 from langchain_anthropic import ChatAnthropic
-from typing import Any, Dict
 
 from supercontrast.provider.provider_enum import Provider
 from supercontrast.provider.provider_handler import ProviderHandler
@@ -31,7 +30,7 @@ class SentimentAnalysisOutput(pydantic.BaseModel):
 
 
 SENTIMENT_ANALYSIS_PROMPT = PromptTemplate(
-    template="Analyze the sentiment of the following text. Respond with a single number between -1 (very negative) and 1 (very positive):\n\n{text}\n\n{format_instructions}",
+    template="Analyze the sentiment of the following text. Respond with 1 for positive, 0 for neutral, and -1 for negative:\n\n{text}\n\n{format_instructions}",
     input_variables=["text"],
     partial_variables={
         "format_instructions": PydanticOutputParser(

@@ -3,7 +3,6 @@ import json
 from supercontrast.client import supercontrast_client
 from supercontrast.provider import Provider
 from supercontrast.task import Task, TranscriptionRequest
-from supercontrast.utils.audio import convert_to_mp3
 
 # Define test audio file
 

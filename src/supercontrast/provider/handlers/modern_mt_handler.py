@@ -60,7 +60,7 @@ class ModernMTTranslation(ProviderHandler):
     ) -> "ModernMTTranslation":
         api_key = os.environ.get("MODERN_MT_API_KEY")
         if not api_key:
-            raise EnvironmentError("MODERNMT_API_KEY environment variable is not set")
+            raise EnvironmentError("MODERN_MT_API_KEY environment variable is not set")
         return cls(api_key, source_language, target_language)
 
 

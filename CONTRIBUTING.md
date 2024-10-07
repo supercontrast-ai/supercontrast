@@ -66,13 +66,19 @@ gh pr create --title "Add new feature: description" --body "Detailed description
 ```
 
 
+### 9. Issue Reporting
+
+If you find a bug or would like to request a feature, please open an issue on GitHub. Provide as much detail as possible, including steps to reproduce the problem if applicable.
 
 
+### 10. Documentation Improvements
+
+We welcome contributions to our documentation. If you find outdated information, unclear explanations, or think a section could use more examples, feel free to submit a pull request.
 
 
+### 11. Community Guidelines
 
-
-
+When contributing to this project, please adhere to our code of conduct. Be respectful of others' opinions and contributions, and keep the discussions focused on making the project better.
 
 
 

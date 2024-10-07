@@ -12,4 +12,7 @@ First, fork the repository on GitHub to create your own copy. Then, clone your f
 git clone https://github.com/YOUR_USERNAME/supercontrast.git
 
 
+### 2. Install the Package
+
+
 

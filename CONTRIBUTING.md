@@ -11,9 +11,5 @@ First, fork the repository on GitHub to create your own copy. Then, clone your f
 ```bash
 git clone https://github.com/YOUR_USERNAME/supercontrast.git
 
-### 2. Install the Package
-Navigate to the project directory and install the package in development mode:
 
-cd supercontrast
-pip install -e .[dev]
 

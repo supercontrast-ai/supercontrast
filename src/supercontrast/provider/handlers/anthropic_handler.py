@@ -7,10 +7,12 @@ from langchain_anthropic import ChatAnthropic
 
 from supercontrast.provider.provider_enum import Provider
 from supercontrast.provider.provider_handler import ProviderHandler
-from supercontrast.task import (
+from supercontrast.task.task_enum import Task
+from supercontrast.task.types.sentiment_analysis_types import (
     SentimentAnalysisRequest,
     SentimentAnalysisResponse,
-    Task,
+)
+from supercontrast.task.types.translation_types import (
     TranslationRequest,
     TranslationResponse,
 )

@@ -5,13 +5,13 @@ from google.oauth2 import service_account
 
 from supercontrast.provider.provider_enum import Provider
 from supercontrast.provider.provider_handler import ProviderHandler
-from supercontrast.task import (
-    OCRBoundingBox,
-    OCRRequest,
-    OCRResponse,
+from supercontrast.task.task_enum import Task
+from supercontrast.task.types.ocr_types import OCRBoundingBox, OCRRequest, OCRResponse
+from supercontrast.task.types.sentiment_analysis_types import (
     SentimentAnalysisRequest,
     SentimentAnalysisResponse,
-    Task,
+)
+from supercontrast.task.types.translation_types import (
     TranslationRequest,
     TranslationResponse,
 )

@@ -8,7 +8,8 @@ from typing import List
 
 from supercontrast.provider.provider_enum import Provider
 from supercontrast.provider.provider_handler import ProviderHandler
-from supercontrast.task import OCRBoundingBox, OCRRequest, OCRResponse, Task
+from supercontrast.task.task_enum import Task
+from supercontrast.task.types.ocr_types import OCRBoundingBox, OCRRequest, OCRResponse
 from supercontrast.utils.image import get_image_size, load_image_data
 
 # Task.OCR

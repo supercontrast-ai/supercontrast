@@ -9,6 +9,12 @@ isort
 # Testing
 pytest
 
+# Metrics
+jiwer
+nltk
+num2words
+sacrebleu
+
 # Langchain
 langchain
 langchain_anthropic
@@ -29,11 +35,6 @@ google-cloud-speech
 google-cloud-language
 google-cloud-translate
 google-cloud-vision
-
-# Langchain
-langchain
-langchain_anthropic
-langchain_openai
 
 # Microsoft Azure
 msrest

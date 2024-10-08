@@ -3,6 +3,7 @@ import time
 from abc import ABC
 from typing import Dict, Generic, List, Optional, Tuple, TypeVar
 
+from supercontrast.metrics.metrics_factory import metrics_factory
 from supercontrast.optimizer.optimizer_enum import Optimizer
 from supercontrast.optimizer.optimizer_factory import optimizer_factory
 from supercontrast.provider.provider_enum import Provider
@@ -27,12 +28,16 @@ class TaskHandler(ABC, Generic[RequestType, ResponseType]):
             provider: provider_factory(task=task, provider=provider, **config)
             for provider in providers
         }
+        self.metrics_handler = metrics_factory(task=task)
         self.optimizer_handler = optimizer_factory(
             task=task, providers=providers, optimizer=optimizer
         )
 
     def request(
-        self, body: RequestType, provider: Optional[Provider] = None
+        self,
+        body: RequestType,
+        provider: Optional[Provider] = None,
+        reference: Optional[ResponseType] = None,
     ) -> Tuple[ResponseType, TaskMetadata]:
         if provider is None:
             provider = self.optimizer_handler.get_provider()
@@ -43,13 +48,21 @@ class TaskHandler(ABC, Generic[RequestType, ResponseType]):
         latency = time.time() - start_time
 
         metadata = TaskMetadata(
-            task=self.task, provider=provider, latency=latency, metrics={}
+            task=self.task, provider=provider, latency=latency, reference=reference
         )
+
+        if reference is not None:
+            metrics_response = self.metrics_handler.calculate_metrics(
+                reference, response
+            )
+            metadata.metrics = metrics_response.metrics
+            metadata.normalized_reference = metrics_response.normalized_reference
+            metadata.normalized_prediction = metrics_response.normalized_prediction
 
         return response, metadata
 
     def evaluate(
-        self, body: RequestType
+        self, body: RequestType, reference: Optional[ResponseType] = None
     ) -> Dict[Provider, Tuple[ResponseType, TaskMetadata]]:
         responses = {}
         for provider, handler in self.provider_handler_map.items():
@@ -59,8 +72,23 @@ class TaskHandler(ABC, Generic[RequestType, ResponseType]):
                 latency = time.time() - start_time
 
                 metadata = TaskMetadata(
-                    task=self.task, provider=provider, latency=latency, metrics={}
+                    task=self.task,
+                    provider=provider,
+                    latency=latency,
+                    reference=reference,
                 )
+
+                if reference is not None:
+                    metrics_response = self.metrics_handler.calculate_metrics(
+                        reference, response
+                    )
+                    metadata.metrics = metrics_response.metrics
+                    metadata.normalized_reference = (
+                        metrics_response.normalized_reference
+                    )
+                    metadata.normalized_prediction = (
+                        metrics_response.normalized_prediction
+                    )
 
                 responses[provider] = (response, metadata)
             except Exception as e:

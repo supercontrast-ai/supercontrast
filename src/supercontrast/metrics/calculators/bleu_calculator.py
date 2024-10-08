@@ -30,6 +30,8 @@ class BLEUNLTKCalculator(MetricsCalculator[str, float]):
         bleu_score = nltk_sentence_bleu([reference_tokens], hypothesis_tokens)
         if isinstance(bleu_score, float):
             return bleu_score
+        if isinstance(bleu_score, int):
+            return float(bleu_score)
         else:
             raise ValueError(f"Invalid result type: {type(bleu_score)}")
 

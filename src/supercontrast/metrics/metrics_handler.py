@@ -19,9 +19,13 @@ from supercontrast.metrics.calculators.word_calculator import (
 )
 from supercontrast.metrics.metrics_calculator import MetricsCalculator
 from supercontrast.metrics.metrics_enum import Metric
+from supercontrast.metrics.metrics_response import MetricsResponse
 from supercontrast.task.types.ocr_types import OCRResponse
 from supercontrast.task.types.transcription_types import TranscriptionResponse
 from supercontrast.task.types.translation_types import TranslationResponse
+from supercontrast.utils.text import normalize_text
+
+# get metrics calculator
 
 
 def get_metrics_calculator(metric: Metric, **config) -> MetricsCalculator:
@@ -49,6 +53,9 @@ def get_metrics_calculator(metric: Metric, **config) -> MetricsCalculator:
         raise ValueError(f"Unsupported metric: {metric}")
 
 
+# metrics handler
+
+
 class MetricsHandler(ABC):
     def __init__(self):
         self.metrics_calculators = self.get_metrics_calculators()
@@ -58,61 +65,86 @@ class MetricsHandler(ABC):
         pass
 
     @abstractmethod
-    def calculate_metrics(self, reference: Any, prediction: Any) -> Dict[Metric, float]:
+    def calculate_metrics(self, reference: Any, prediction: Any) -> MetricsResponse:
         pass
 
 
 class OCRMetricsHandler(MetricsHandler):
     def get_metrics_calculators(self) -> Dict[Metric, MetricsCalculator]:
         return {
-            Metric.CER: get_metrics_calculator(Metric.CER),
-            Metric.WER: get_metrics_calculator(Metric.WER),
+            Metric.CER: CharacterErrorRateCalculator(),
+            Metric.WER: WordErrorRateCalculator(),
         }
 
     def calculate_metrics(
         self, reference: OCRResponse, prediction: OCRResponse
-    ) -> Dict[Metric, float]:
-        results = {}
+    ) -> MetricsResponse:
+        normalized_reference = normalize_text(reference.all_text, "ocr")
+        normalized_prediction = normalize_text(prediction.all_text, "ocr")
+
+        metrics: Dict[Metric, Any] = {}
         for metric, calculator in self.metrics_calculators.items():
-            results[metric] = calculator.calculate(
-                reference.all_text, prediction.all_text
+            metrics[metric] = calculator.calculate(
+                normalized_reference, normalized_prediction
             )
-        return results
+        return MetricsResponse(
+            metrics=metrics,
+            normalized_reference=normalized_reference,
+            normalized_prediction=normalized_prediction,
+        )
 
 
 class TranscriptionMetricsHandler(MetricsHandler):
     def get_metrics_calculators(self) -> Dict[Metric, MetricsCalculator]:
         return {
-            Metric.WER: get_metrics_calculator(Metric.WER),
-            Metric.MER: get_metrics_calculator(Metric.MER),
-            Metric.WIL: get_metrics_calculator(Metric.WIL),
-            Metric.CER: get_metrics_calculator(Metric.CER),
-            Metric.WIP: get_metrics_calculator(Metric.WIP),
-            Metric.WRR: get_metrics_calculator(Metric.WRR),
+            Metric.WER: WordErrorRateCalculator(),
+            Metric.MER: MatchErrorRateCalculator(),
+            Metric.WIL: WordInformationLostCalculator(),
+            Metric.CER: CharacterErrorRateCalculator(),
+            Metric.WIP: WordInformationPreservedCalculator(),
+            Metric.WRR: WordRecognitionRateCalculator(),
         }
 
     def calculate_metrics(
         self, reference: TranscriptionResponse, prediction: TranscriptionResponse
-    ) -> Dict[Metric, float]:
-        results = {}
+    ) -> MetricsResponse:
+        normalized_reference = normalize_text(reference.text, "transcription")
+        normalized_prediction = normalize_text(prediction.text, "transcription")
+
+        metrics = {}
         for metric, calculator in self.metrics_calculators.items():
-            results[metric] = calculator.calculate(reference.text, prediction.text)
-        return results
+            metrics[metric] = calculator.calculate(
+                normalized_reference, normalized_prediction
+            )
+        return MetricsResponse(
+            metrics=metrics,
+            normalized_reference=normalized_reference,
+            normalized_prediction=normalized_prediction,
+        )
 
 
 class TranslationMetricsHandler(MetricsHandler):
     def get_metrics_calculators(self) -> Dict[Metric, MetricsCalculator]:
         return {
-            Metric.BLEU: get_metrics_calculator(Metric.BLEU),
-            Metric.BLEU_NLTK: get_metrics_calculator(Metric.BLEU_NLTK),
-            Metric.METEOR: get_metrics_calculator(Metric.METEOR),
-            Metric.CHRF: get_metrics_calculator(Metric.CHRF),
+            Metric.BLEU: BLEUCalculator(),
+            Metric.BLEU_NLTK: BLEUNLTKCalculator(),
+            Metric.METEOR: METEORCalculator(),
+            Metric.CHRF: CHRFCalculator(),
         }
 
     def calculate_metrics(
         self, reference: TranslationResponse, prediction: TranslationResponse
-    ) -> Dict[Metric, float]:
-        results = {}
+    ) -> MetricsResponse:
+        normalized_reference = normalize_text(reference.text, "translation")
+        normalized_prediction = normalize_text(prediction.text, "translation")
+
+        metrics = {}
         for metric, calculator in self.metrics_calculators.items():
-            results[metric] = calculator.calculate(reference.text, prediction.text)
-        return results
+            metrics[metric] = calculator.calculate(
+                normalized_reference, normalized_prediction
+            )
+        return MetricsResponse(
+            metrics=metrics,
+            normalized_reference=normalized_reference,
+            normalized_prediction=normalized_prediction,
+        )

@@ -21,3 +21,6 @@ class Client:
 
     def request(self, *args, **kwargs):
         return self.task_handler.request(*args, **kwargs)
+
+    def evaluate(self, *args, **kwargs):
+        return self.task_handler.evaluate(*args, **kwargs)

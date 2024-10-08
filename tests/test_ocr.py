@@ -1,8 +1,16 @@
-from supercontrast import Client, OCRRequest, OCRResponse, Provider, Task, TaskMetadata
+from supercontrast import (
+    OCRRequest,
+    OCRResponse,
+    Provider,
+    SuperContrastClient,
+    Task,
+    TaskMetadata,
+)
 
 # constants
 
 TEST_IMAGE_URL = "https://jeroen.github.io/images/testocr.png"
+REFERENCE_OCR_TEXT = "This is a lot of 12 point text to test the\nocr code and see if it works on all types\nof file format.\nThe quick brown dog jumped over the\nlazy fox. The quick brown dog jumped\nover the lazy fox. The quick brown dog\njumped over the lazy fox. The quick\nbrown dog jumped over the lazy fox."
 
 # helper functions
 
@@ -24,9 +32,12 @@ def print_request_response_and_metadata(
 
 
 def test_ocr_api4ai():
-    ocr_api4ai_client = Client(task=Task.OCR, providers=[Provider.API4AI])
+    ocr_api4ai_client = SuperContrastClient(task=Task.OCR, providers=[Provider.API4AI])
     request = OCRRequest(image=TEST_IMAGE_URL)
-    response, metadata = ocr_api4ai_client.request(request)
+    reference_response = OCRResponse(all_text=REFERENCE_OCR_TEXT, bounding_boxes=[])
+    response, metadata = ocr_api4ai_client.request(
+        request, reference=reference_response
+    )
 
     assert response is not None
     assert isinstance(response.all_text, str)
@@ -43,9 +54,10 @@ def test_ocr_api4ai():
 
 
 def test_ocr_aws():
-    ocr_aws_client = Client(task=Task.OCR, providers=[Provider.AWS])
+    ocr_aws_client = SuperContrastClient(task=Task.OCR, providers=[Provider.AWS])
     request = OCRRequest(image=TEST_IMAGE_URL)
-    response, metadata = ocr_aws_client.request(request)
+    reference_response = OCRResponse(all_text=REFERENCE_OCR_TEXT, bounding_boxes=[])
+    response, metadata = ocr_aws_client.request(request, reference=reference_response)
 
     assert response is not None
     assert isinstance(response.all_text, str)
@@ -62,9 +74,10 @@ def test_ocr_aws():
 
 
 def test_ocr_azure():
-    ocr_azure_client = Client(task=Task.OCR, providers=[Provider.AZURE])
+    ocr_azure_client = SuperContrastClient(task=Task.OCR, providers=[Provider.AZURE])
     request = OCRRequest(image=TEST_IMAGE_URL)
-    response, metadata = ocr_azure_client.request(request)
+    reference_response = OCRResponse(all_text=REFERENCE_OCR_TEXT, bounding_boxes=[])
+    response, metadata = ocr_azure_client.request(request, reference=reference_response)
 
     assert response is not None
     assert isinstance(response.all_text, str)
@@ -81,9 +94,14 @@ def test_ocr_azure():
 
 
 def test_ocr_clarifai():
-    ocr_clarifai_client = Client(task=Task.OCR, providers=[Provider.CLARIFAI])
+    ocr_clarifai_client = SuperContrastClient(
+        task=Task.OCR, providers=[Provider.CLARIFAI]
+    )
     request = OCRRequest(image=TEST_IMAGE_URL)
-    response, metadata = ocr_clarifai_client.request(request)
+    reference_response = OCRResponse(all_text=REFERENCE_OCR_TEXT, bounding_boxes=[])
+    response, metadata = ocr_clarifai_client.request(
+        request, reference=reference_response
+    )
 
     assert response is not None
     assert isinstance(response.all_text, str)
@@ -100,9 +118,10 @@ def test_ocr_clarifai():
 
 
 def test_ocr_gcp():
-    ocr_gcp_client = Client(task=Task.OCR, providers=[Provider.GCP])
+    ocr_gcp_client = SuperContrastClient(task=Task.OCR, providers=[Provider.GCP])
     request = OCRRequest(image=TEST_IMAGE_URL)
-    response, metadata = ocr_gcp_client.request(request)
+    reference_response = OCRResponse(all_text=REFERENCE_OCR_TEXT, bounding_boxes=[])
+    response, metadata = ocr_gcp_client.request(request, reference=reference_response)
 
     assert response is not None
     assert isinstance(response.all_text, str)
@@ -119,9 +138,14 @@ def test_ocr_gcp():
 
 
 def test_ocr_sentisight():
-    ocr_sentisight_client = Client(task=Task.OCR, providers=[Provider.SENTISIGHT])
+    ocr_sentisight_client = SuperContrastClient(
+        task=Task.OCR, providers=[Provider.SENTISIGHT]
+    )
     request = OCRRequest(image=TEST_IMAGE_URL)
-    response, metadata = ocr_sentisight_client.request(request)
+    reference_response = OCRResponse(all_text=REFERENCE_OCR_TEXT, bounding_boxes=[])
+    response, metadata = ocr_sentisight_client.request(
+        request, reference=reference_response
+    )
 
     assert response is not None
     assert isinstance(response.all_text, str)
@@ -135,3 +159,44 @@ def test_ocr_sentisight():
     assert metadata.latency > 0
 
     print_request_response_and_metadata(request, response, metadata)
+
+
+# evaluate
+
+
+def test_ocr_evaluate():
+    ocr_client = SuperContrastClient(
+        task=Task.OCR,
+        providers=[
+            Provider.API4AI,
+            Provider.AWS,
+            Provider.AZURE,
+            Provider.CLARIFAI,
+            Provider.GCP,
+            Provider.SENTISIGHT,
+        ],
+    )
+    request = OCRRequest(image=TEST_IMAGE_URL)
+    reference_response = OCRResponse(all_text=REFERENCE_OCR_TEXT, bounding_boxes=[])
+    responses = ocr_client.evaluate(request, reference=reference_response)
+
+    assert responses is not None
+    assert isinstance(responses, dict)
+    assert all(
+        isinstance(response, tuple)
+        and len(response) == 2
+        and isinstance(response[0], OCRResponse)
+        and isinstance(response[1], TaskMetadata)
+        for response in responses.values()
+    )
+
+    for provider, (response, metadata) in responses.items():
+        print_request_response_and_metadata(request, response, metadata)
+
+        assert isinstance(response.all_text, str)
+        assert len(response.all_text) > 0
+        assert len(response.bounding_boxes) > 0
+
+        assert metadata.task == Task.OCR
+        assert metadata.provider == provider
+        assert metadata.latency > 0

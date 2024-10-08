@@ -7,7 +7,7 @@ from supercontrast.task.task_factory import task_factory
 from supercontrast.task.task_handler import TaskHandler
 
 
-class Client:
+class SuperContrastClient:
     def __init__(
         self,
         task: Task,

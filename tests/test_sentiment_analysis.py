@@ -1,8 +1,8 @@
 from supercontrast import (
-    Client,
     Provider,
     SentimentAnalysisRequest,
     SentimentAnalysisResponse,
+    SuperContrastClient,
     Task,
     TaskMetadata,
 )
@@ -33,7 +33,7 @@ def print_request_response_and_metadata(
 
 
 def test_sentiment_analysis_anthropic():
-    sentiment_analysis_anthropic_client = Client(
+    sentiment_analysis_anthropic_client = SuperContrastClient(
         task=Task.SENTIMENT_ANALYSIS, providers=[Provider.ANTHROPIC]
     )
     request = SentimentAnalysisRequest(text=TEST_TEXT)
@@ -53,7 +53,7 @@ def test_sentiment_analysis_anthropic():
 
 
 def test_sentiment_analysis_aws():
-    sentiment_analysis_aws_client = Client(
+    sentiment_analysis_aws_client = SuperContrastClient(
         task=Task.SENTIMENT_ANALYSIS, providers=[Provider.AWS]
     )
     request = SentimentAnalysisRequest(text=TEST_TEXT)
@@ -73,7 +73,7 @@ def test_sentiment_analysis_aws():
 
 
 def test_sentiment_analysis_azure():
-    sentiment_analysis_azure_client = Client(
+    sentiment_analysis_azure_client = SuperContrastClient(
         task=Task.SENTIMENT_ANALYSIS, providers=[Provider.AZURE]
     )
     request = SentimentAnalysisRequest(text=TEST_TEXT)
@@ -93,7 +93,7 @@ def test_sentiment_analysis_azure():
 
 
 def test_sentiment_analysis_gcp():
-    sentiment_analysis_gcp_client = Client(
+    sentiment_analysis_gcp_client = SuperContrastClient(
         task=Task.SENTIMENT_ANALYSIS, providers=[Provider.GCP]
     )
     request = SentimentAnalysisRequest(text=TEST_TEXT)
@@ -113,7 +113,7 @@ def test_sentiment_analysis_gcp():
 
 
 def test_sentiment_analysis_openai():
-    sentiment_analysis_openai_client = Client(
+    sentiment_analysis_openai_client = SuperContrastClient(
         task=Task.SENTIMENT_ANALYSIS, providers=[Provider.OPENAI]
     )
     request = SentimentAnalysisRequest(text=TEST_TEXT)
@@ -130,3 +130,41 @@ def test_sentiment_analysis_openai():
     assert metadata.latency > 0
 
     print_request_response_and_metadata(request, response, metadata)
+
+
+# evaluate
+
+
+def test_sentiment_analysis_evaluate():
+    sentiment_analysis_client = SuperContrastClient(
+        task=Task.SENTIMENT_ANALYSIS,
+        providers=[
+            Provider.ANTHROPIC,
+            Provider.AWS,
+            Provider.AZURE,
+            Provider.GCP,
+            Provider.OPENAI,
+        ],
+    )
+    request = SentimentAnalysisRequest(text=TEST_TEXT)
+    responses = sentiment_analysis_client.evaluate(request)
+
+    assert responses is not None
+    assert isinstance(responses, dict)
+    assert all(
+        isinstance(response, tuple)
+        and len(response) == 2
+        and isinstance(response[0], SentimentAnalysisResponse)
+        and isinstance(response[1], TaskMetadata)
+        for response in responses.values()
+    )
+
+    for provider, (response, metadata) in responses.items():
+        print_request_response_and_metadata(request, response, metadata)
+
+        assert isinstance(response.score, float)
+        assert response.score > 0
+
+        assert metadata.task == Task.SENTIMENT_ANALYSIS
+        assert metadata.provider == provider
+        assert metadata.latency > 0

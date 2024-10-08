@@ -51,7 +51,7 @@ class TaskHandler(ABC, Generic[RequestType, ResponseType]):
             task=self.task, provider=provider, latency=latency, reference=reference
         )
 
-        if reference is not None:
+        if reference is not None and self.metrics_handler is not None:
             metrics_response = self.metrics_handler.calculate_metrics(
                 reference, response
             )
@@ -78,7 +78,7 @@ class TaskHandler(ABC, Generic[RequestType, ResponseType]):
                     reference=reference,
                 )
 
-                if reference is not None:
+                if reference is not None and self.metrics_handler is not None:
                     metrics_response = self.metrics_handler.calculate_metrics(
                         reference, response
                     )

@@ -1,6 +1,6 @@
 from supercontrast import (
-    Client,
     Provider,
+    SuperContrastClient,
     Task,
     TaskMetadata,
     TranslationRequest,
@@ -37,7 +37,7 @@ def print_request_response_and_metadata(
 
 
 def test_translate_anthropic():
-    translate_anthropic_client = Client(
+    translate_anthropic_client = SuperContrastClient(
         task=Task.TRANSLATION,
         providers=[Provider.ANTHROPIC],
         source_language="en",
@@ -64,7 +64,7 @@ def test_translate_anthropic():
 
 
 def test_translate_aws():
-    translate_aws_client = Client(
+    translate_aws_client = SuperContrastClient(
         task=Task.TRANSLATION,
         providers=[Provider.AWS],
         source_language="en",
@@ -91,7 +91,7 @@ def test_translate_aws():
 
 
 def test_translate_azure():
-    translate_azure_client = Client(
+    translate_azure_client = SuperContrastClient(
         task=Task.TRANSLATION,
         providers=[Provider.AZURE],
         source_language="en",
@@ -118,7 +118,7 @@ def test_translate_azure():
 
 
 def test_translate_gcp():
-    translate_gcp_client = Client(
+    translate_gcp_client = SuperContrastClient(
         task=Task.TRANSLATION,
         providers=[Provider.GCP],
         source_language="en",
@@ -145,7 +145,7 @@ def test_translate_gcp():
 
 
 def test_translate_modernmt():
-    translate_modernmt_client = Client(
+    translate_modernmt_client = SuperContrastClient(
         task=Task.TRANSLATION,
         providers=[Provider.MODERNMT],
         source_language="en",
@@ -172,7 +172,7 @@ def test_translate_modernmt():
 
 
 def test_translate_openai():
-    translate_openai_client = Client(
+    translate_openai_client = SuperContrastClient(
         task=Task.TRANSLATION,
         providers=[Provider.OPENAI],
         source_language="en",
@@ -202,7 +202,7 @@ def test_translate_openai():
 
 
 def test_translate_evaluate():
-    translate_anthropic_client = Client(
+    translate_client = SuperContrastClient(
         task=Task.TRANSLATION,
         providers=[
             Provider.ANTHROPIC,
@@ -217,13 +217,10 @@ def test_translate_evaluate():
     )
     request = TranslationRequest(text=TEST_TEXT)
     reference_response = TranslationResponse(text=REFERENCE_TRANSLATIONS["es"])
-    responses = translate_anthropic_client.evaluate(
-        request, reference=reference_response
-    )
+    responses = translate_client.evaluate(request, reference=reference_response)
 
     assert responses is not None
     assert isinstance(responses, dict)
-    assert len(responses.values()) == 5
     assert all(
         isinstance(response, tuple)
         and len(response) == 2

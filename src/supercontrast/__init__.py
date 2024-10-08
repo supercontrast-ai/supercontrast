@@ -1,4 +1,4 @@
-from supercontrast.client import Client
+from supercontrast.client import SuperContrastClient
 from supercontrast.metrics.metrics_enum import Metric
 from supercontrast.optimizer.optimizer_enum import Optimizer
 from supercontrast.provider.provider_enum import Provider

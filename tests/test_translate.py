@@ -6,6 +6,7 @@ from supercontrast import (
     TranslationRequest,
     TranslationResponse,
 )
+from test_utils import print_request_response_and_metadata
 
 # constants
 
@@ -16,22 +17,6 @@ REFERENCE_TRANSLATIONS = {
     "de": "Hallo, Welt! Dies ist ein Test der Übersetzung.",
     "es": "Hola, mundo! Esto es una prueba de traducción.",
 }
-
-# helper functions
-
-
-def print_request_response_and_metadata(
-    request: TranslationRequest, response: TranslationResponse, metadata: TaskMetadata
-):
-    print("\n", "-" * 80, "\n")
-    print("Translation Request:")
-    print(request, "\n")
-    print(f"Translation Response from {metadata.provider}:")
-    print(response, "\n")
-    print("Metadata:")
-    print(metadata, "\n")
-    print("-" * 80, "\n")
-
 
 # tests
 
@@ -60,7 +45,7 @@ def test_translate_anthropic():
     assert metadata.provider == Provider.ANTHROPIC
     assert metadata.latency > 0
 
-    print_request_response_and_metadata(request, response, metadata)
+    print_request_response_and_metadata(Task.TRANSLATION, request, response, metadata)
 
 
 def test_translate_aws():
@@ -87,7 +72,7 @@ def test_translate_aws():
     assert metadata.provider == Provider.AWS
     assert metadata.latency > 0
 
-    print_request_response_and_metadata(request, response, metadata)
+    print_request_response_and_metadata(Task.TRANSLATION, request, response, metadata)
 
 
 def test_translate_azure():
@@ -114,7 +99,7 @@ def test_translate_azure():
     assert metadata.provider == Provider.AZURE
     assert metadata.latency > 0
 
-    print_request_response_and_metadata(request, response, metadata)
+    print_request_response_and_metadata(Task.TRANSLATION, request, response, metadata)
 
 
 def test_translate_gcp():
@@ -141,7 +126,7 @@ def test_translate_gcp():
     assert metadata.provider == Provider.GCP
     assert metadata.latency > 0
 
-    print_request_response_and_metadata(request, response, metadata)
+    print_request_response_and_metadata(Task.TRANSLATION, request, response, metadata)
 
 
 def test_translate_modernmt():
@@ -168,7 +153,7 @@ def test_translate_modernmt():
     assert metadata.provider == Provider.MODERNMT
     assert metadata.latency > 0
 
-    print_request_response_and_metadata(request, response, metadata)
+    print_request_response_and_metadata(Task.TRANSLATION, request, response, metadata)
 
 
 def test_translate_openai():
@@ -195,7 +180,7 @@ def test_translate_openai():
     assert metadata.provider == Provider.OPENAI
     assert metadata.latency > 0
 
-    print_request_response_and_metadata(request, response, metadata)
+    print_request_response_and_metadata(Task.TRANSLATION, request, response, metadata)
 
 
 # evaluate
@@ -231,4 +216,6 @@ def test_translate_evaluate():
     )
 
     for _, (response, metadata) in responses.items():
-        print_request_response_and_metadata(request, response, metadata)
+        print_request_response_and_metadata(
+            Task.TRANSLATION, request, response, metadata
+        )

@@ -6,29 +6,12 @@ from supercontrast import (
     TranscriptionRequest,
     TranscriptionResponse,
 )
+from test_utils import print_request_response_and_metadata
 
 # constants
 
 TEST_AUDIO_URL = "https://github.com/voxserv/audio_quality_testing_samples/raw/master/mono_44100/127389__acclivity__thetimehascome.wav"
 REFERENCE_TRANSCRIPTION = "November 10th, Wednesday, 9:00 PM. I'm standing in a dark alley. After waiting several hours, the time has come. A woman with long dark hair approaches. I have to act, and fast, before she realizes what has happened. I must find out."
-
-# helper functions
-
-
-def print_request_response_and_metadata(
-    request: TranscriptionRequest,
-    response: TranscriptionResponse,
-    metadata: TaskMetadata,
-):
-    print("\n", "-" * 80, "\n")
-    print("Transcription Request:")
-    print(request, "\n")
-    print(f"Transcription Response from {metadata.provider}:")
-    print(response, "\n")
-    print("Metadata:")
-    print(metadata, "\n")
-    print("-" * 80, "\n")
-
 
 # tests
 
@@ -53,7 +36,7 @@ def test_transcription_azure():
     assert metadata.provider == Provider.AZURE
     assert metadata.latency > 0
 
-    print_request_response_and_metadata(request, response, metadata)
+    print_request_response_and_metadata(Task.TRANSCRIPTION, request, response, metadata)
 
 
 def test_transcription_openai():
@@ -76,7 +59,7 @@ def test_transcription_openai():
     assert metadata.provider == Provider.OPENAI
     assert metadata.latency > 0
 
-    print_request_response_and_metadata(request, response, metadata)
+    print_request_response_and_metadata(Task.TRANSCRIPTION, request, response, metadata)
 
 
 # evaluate
@@ -107,4 +90,6 @@ def test_transcription_evaluate():
     )
 
     for _, (response, metadata) in responses.items():
-        print_request_response_and_metadata(request, response, metadata)
+        print_request_response_and_metadata(
+            Task.TRANSCRIPTION, request, response, metadata
+        )

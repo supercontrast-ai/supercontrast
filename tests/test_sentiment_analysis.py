@@ -6,27 +6,11 @@ from supercontrast import (
     Task,
     TaskMetadata,
 )
+from test_utils import print_request_response_and_metadata
 
 # constants
 
 TEST_TEXT = "I love programming in Python!"
-
-# helper functions
-
-
-def print_request_response_and_metadata(
-    request: SentimentAnalysisRequest,
-    response: SentimentAnalysisResponse,
-    metadata: TaskMetadata,
-):
-    print("\n", "-" * 80, "\n")
-    print("Sentiment Analysis Request:")
-    print(request, "\n")
-    print(f"Sentiment Analysis Response from {metadata.provider}:")
-    print(response, "\n")
-    print("Metadata:")
-    print(metadata, "\n")
-    print("-" * 80, "\n")
 
 
 # tests
@@ -49,7 +33,9 @@ def test_sentiment_analysis_anthropic():
     assert metadata.provider == Provider.ANTHROPIC
     assert metadata.latency > 0
 
-    print_request_response_and_metadata(request, response, metadata)
+    print_request_response_and_metadata(
+        Task.SENTIMENT_ANALYSIS, request, response, metadata
+    )
 
 
 def test_sentiment_analysis_aws():
@@ -69,7 +55,9 @@ def test_sentiment_analysis_aws():
     assert metadata.provider == Provider.AWS
     assert metadata.latency > 0
 
-    print_request_response_and_metadata(request, response, metadata)
+    print_request_response_and_metadata(
+        Task.SENTIMENT_ANALYSIS, request, response, metadata
+    )
 
 
 def test_sentiment_analysis_azure():
@@ -89,7 +77,9 @@ def test_sentiment_analysis_azure():
     assert metadata.provider == Provider.AZURE
     assert metadata.latency > 0
 
-    print_request_response_and_metadata(request, response, metadata)
+    print_request_response_and_metadata(
+        Task.SENTIMENT_ANALYSIS, request, response, metadata
+    )
 
 
 def test_sentiment_analysis_gcp():
@@ -109,7 +99,9 @@ def test_sentiment_analysis_gcp():
     assert metadata.provider == Provider.GCP
     assert metadata.latency > 0
 
-    print_request_response_and_metadata(request, response, metadata)
+    print_request_response_and_metadata(
+        Task.SENTIMENT_ANALYSIS, request, response, metadata
+    )
 
 
 def test_sentiment_analysis_openai():
@@ -129,7 +121,9 @@ def test_sentiment_analysis_openai():
     assert metadata.provider == Provider.OPENAI
     assert metadata.latency > 0
 
-    print_request_response_and_metadata(request, response, metadata)
+    print_request_response_and_metadata(
+        Task.SENTIMENT_ANALYSIS, request, response, metadata
+    )
 
 
 # evaluate
@@ -160,7 +154,9 @@ def test_sentiment_analysis_evaluate():
     )
 
     for provider, (response, metadata) in responses.items():
-        print_request_response_and_metadata(request, response, metadata)
+        print_request_response_and_metadata(
+            Task.SENTIMENT_ANALYSIS, request, response, metadata
+        )
 
         assert isinstance(response.score, float)
         assert response.score > 0

@@ -6,26 +6,12 @@ from supercontrast import (
     Task,
     TaskMetadata,
 )
+from test_utils import print_request_response_and_metadata
 
 # constants
 
 TEST_IMAGE_URL = "https://jeroen.github.io/images/testocr.png"
 REFERENCE_OCR_TEXT = "This is a lot of 12 point text to test the\nocr code and see if it works on all types\nof file format.\nThe quick brown dog jumped over the\nlazy fox. The quick brown dog jumped\nover the lazy fox. The quick brown dog\njumped over the lazy fox. The quick\nbrown dog jumped over the lazy fox."
-
-# helper functions
-
-
-def print_request_response_and_metadata(
-    request: OCRRequest, response: OCRResponse, metadata: TaskMetadata
-):
-    print("\n", "-" * 80, "\n")
-    print("OCR Request:")
-    print(request, "\n")
-    print(f"OCR Response from {metadata.provider}:")
-    print(response, "\n")
-    print("Metadata:")
-    print(metadata, "\n")
-    print("-" * 80, "\n")
 
 
 # tests
@@ -50,7 +36,7 @@ def test_ocr_api4ai():
     assert metadata.provider == Provider.API4AI
     assert metadata.latency > 0
 
-    print_request_response_and_metadata(request, response, metadata)
+    print_request_response_and_metadata(Task.OCR, request, response, metadata)
 
 
 def test_ocr_aws():
@@ -70,7 +56,7 @@ def test_ocr_aws():
     assert metadata.provider == Provider.AWS
     assert metadata.latency > 0
 
-    print_request_response_and_metadata(request, response, metadata)
+    print_request_response_and_metadata(Task.OCR, request, response, metadata)
 
 
 def test_ocr_azure():
@@ -90,7 +76,7 @@ def test_ocr_azure():
     assert metadata.provider == Provider.AZURE
     assert metadata.latency > 0
 
-    print_request_response_and_metadata(request, response, metadata)
+    print_request_response_and_metadata(Task.OCR, request, response, metadata)
 
 
 def test_ocr_clarifai():
@@ -114,7 +100,7 @@ def test_ocr_clarifai():
     assert metadata.provider == Provider.CLARIFAI
     assert metadata.latency > 0
 
-    print_request_response_and_metadata(request, response, metadata)
+    print_request_response_and_metadata(Task.OCR, request, response, metadata)
 
 
 def test_ocr_gcp():
@@ -134,7 +120,7 @@ def test_ocr_gcp():
     assert metadata.provider == Provider.GCP
     assert metadata.latency > 0
 
-    print_request_response_and_metadata(request, response, metadata)
+    print_request_response_and_metadata(Task.OCR, request, response, metadata)
 
 
 def test_ocr_sentisight():
@@ -158,7 +144,7 @@ def test_ocr_sentisight():
     assert metadata.provider == Provider.SENTISIGHT
     assert metadata.latency > 0
 
-    print_request_response_and_metadata(request, response, metadata)
+    print_request_response_and_metadata(Task.OCR, request, response, metadata)
 
 
 # evaluate
@@ -191,7 +177,7 @@ def test_ocr_evaluate():
     )
 
     for provider, (response, metadata) in responses.items():
-        print_request_response_and_metadata(request, response, metadata)
+        print_request_response_and_metadata(Task.OCR, request, response, metadata)
 
         assert isinstance(response.all_text, str)
         assert len(response.all_text) > 0

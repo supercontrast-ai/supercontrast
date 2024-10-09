@@ -29,6 +29,15 @@ from supercontrast.task.types.translation_types import (
 from supercontrast.utils.audio import load_audio_file
 from supercontrast.utils.image import get_image_size, load_image_data
 
+# Constants
+
+AZURE_SUPPORTED_TASKS = [
+    Task.SENTIMENT_ANALYSIS,
+    Task.TRANSLATION,
+    Task.OCR,
+    Task.TRANSCRIPTION,
+]
+
 # Task.SENTIMENT_ANALYSIS
 
 

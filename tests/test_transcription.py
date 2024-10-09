@@ -1,3 +1,5 @@
+from test_utils import print_request_response_and_metadata
+
 from supercontrast import (
     Provider,
     SuperContrastClient,
@@ -6,7 +8,6 @@ from supercontrast import (
     TranscriptionRequest,
     TranscriptionResponse,
 )
-from test_utils import print_request_response_and_metadata
 
 # constants
 

@@ -11,6 +11,12 @@ from supercontrast.task.types.translation_types import (
     TranslationResponse,
 )
 
+# Constants
+
+MODERNMT_SUPPORTED_TASKS = [Task.TRANSLATION]
+
+# Task.TRANSLATION
+
 
 class ModernMTTranslation(ProviderHandler):
     def __init__(self, api_key: str, source_language: str, target_language: str):

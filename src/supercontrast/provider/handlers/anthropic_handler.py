@@ -21,6 +21,7 @@ from supercontrast.utils.text import truncate_text
 # Constants
 
 ANTHROPIC_MODEL_NAME = "claude-3-5-sonnet-20240620"
+ANTHROPIC_SUPPORTED_TASKS = [Task.SENTIMENT_ANALYSIS, Task.TRANSLATION]
 
 # Task.SENTIMENT_ANALYSIS
 

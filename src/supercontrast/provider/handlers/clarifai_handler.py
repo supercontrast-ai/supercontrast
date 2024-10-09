@@ -12,6 +12,10 @@ from supercontrast.task.task_enum import Task
 from supercontrast.task.types.ocr_types import OCRBoundingBox, OCRRequest, OCRResponse
 from supercontrast.utils.image import get_image_size, load_image_data
 
+# Constants
+
+CLARIFAI_SUPPORTED_TASKS = [Task.OCR]
+
 # Task.OCR
 
 

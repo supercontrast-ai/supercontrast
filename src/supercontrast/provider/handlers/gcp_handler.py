@@ -17,6 +17,10 @@ from supercontrast.task.types.translation_types import (
 )
 from supercontrast.utils.image import load_image_data
 
+# Constants
+
+GCP_SUPPORTED_TASKS = [Task.SENTIMENT_ANALYSIS, Task.TRANSLATION, Task.OCR]
+
 # Task.SENTIMENT_ANALYSIS
 
 

@@ -1,3 +1,5 @@
+from test_utils import print_request_response_and_metadata
+
 from supercontrast import (
     OCRRequest,
     OCRResponse,
@@ -6,7 +8,6 @@ from supercontrast import (
     Task,
     TaskMetadata,
 )
-from test_utils import print_request_response_and_metadata
 
 # constants
 

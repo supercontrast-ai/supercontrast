@@ -33,7 +33,12 @@ from supercontrast.utils.text import truncate_text
 # Constants
 
 OPENAI_MODEL_NAME = "gpt-4o"
-
+OPENAI_SUPPORTED_TASKS = [
+    Task.SENTIMENT_ANALYSIS,
+    Task.TRANSLATION,
+    Task.OCR,
+    Task.TRANSCRIPTION,
+]
 # Task.SENTIMENT_ANALYSIS
 
 

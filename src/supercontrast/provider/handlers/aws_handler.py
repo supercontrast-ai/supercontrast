@@ -15,6 +15,10 @@ from supercontrast.task.types.translation_types import (
 from supercontrast.utils.image import get_image_size, load_image_data
 from supercontrast.utils.text import truncate_text
 
+# Constants
+
+AWS_SUPPORTED_TASKS = [Task.SENTIMENT_ANALYSIS, Task.TRANSLATION, Task.OCR]
+
 # Task.SENTIMENT_ANALYSIS
 
 

@@ -3,8 +3,8 @@ from typing import List, Optional
 from supercontrast.optimizer.handlers.mock import OptimizerMockHandler
 from supercontrast.optimizer.optimizer_enum import Optimizer
 from supercontrast.optimizer.optimizer_handler import OptimizerHandler
-from supercontrast.provider import Provider
-from supercontrast.task import Task
+from supercontrast.provider.provider_enum import Provider
+from supercontrast.task.task_enum import Task
 
 
 def optimizer_factory(

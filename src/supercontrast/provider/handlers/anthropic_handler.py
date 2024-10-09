@@ -7,10 +7,12 @@ from langchain_anthropic import ChatAnthropic
 
 from supercontrast.provider.provider_enum import Provider
 from supercontrast.provider.provider_handler import ProviderHandler
-from supercontrast.task import (
+from supercontrast.task.task_enum import Task
+from supercontrast.task.types.sentiment_analysis_types import (
     SentimentAnalysisRequest,
     SentimentAnalysisResponse,
-    Task,
+)
+from supercontrast.task.types.translation_types import (
     TranslationRequest,
     TranslationResponse,
 )
@@ -19,6 +21,7 @@ from supercontrast.utils.text import truncate_text
 # Constants
 
 ANTHROPIC_MODEL_NAME = "claude-3-5-sonnet-20240620"
+ANTHROPIC_SUPPORTED_TASKS = [Task.SENTIMENT_ANALYSIS, Task.TRANSLATION]
 
 # Task.SENTIMENT_ANALYSIS
 

@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from supercontrast.optimizer.optimizer_enum import Optimizer
-from supercontrast.provider import Provider
-from supercontrast.task import Task
+from supercontrast.provider.provider_enum import Provider
+from supercontrast.task.task_enum import Task
 
 
 class OptimizerHandler(ABC):

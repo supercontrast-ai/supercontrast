@@ -12,22 +12,31 @@ from msrest.authentication import CognitiveServicesCredentials
 
 from supercontrast.provider.provider_enum import Provider
 from supercontrast.provider.provider_handler import ProviderHandler
-from supercontrast.task import (
-    OCRBoundingBox,
-    OCRRequest,
-    OCRResponse,
+from supercontrast.task.task_enum import Task
+from supercontrast.task.types.ocr_types import OCRBoundingBox, OCRRequest, OCRResponse
+from supercontrast.task.types.sentiment_analysis_types import (
     SentimentAnalysisRequest,
     SentimentAnalysisResponse,
-    Task,
-    TranslationRequest,
-    TranslationResponse,
 )
 from supercontrast.task.types.transcription_types import (
     TranscriptionRequest,
     TranscriptionResponse,
 )
+from supercontrast.task.types.translation_types import (
+    TranslationRequest,
+    TranslationResponse,
+)
 from supercontrast.utils.audio import load_audio_file
 from supercontrast.utils.image import get_image_size, load_image_data
+
+# Constants
+
+AZURE_SUPPORTED_TASKS = [
+    Task.SENTIMENT_ANALYSIS,
+    Task.TRANSLATION,
+    Task.OCR,
+    Task.TRANSCRIPTION,
+]
 
 # Task.SENTIMENT_ANALYSIS
 

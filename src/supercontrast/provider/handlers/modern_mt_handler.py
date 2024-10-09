@@ -5,7 +5,17 @@ from typing import Any, Dict, List, Optional
 
 from supercontrast.provider.provider_enum import Provider
 from supercontrast.provider.provider_handler import ProviderHandler
-from supercontrast.task import Task, TranslationRequest, TranslationResponse
+from supercontrast.task.task_enum import Task
+from supercontrast.task.types.translation_types import (
+    TranslationRequest,
+    TranslationResponse,
+)
+
+# Constants
+
+MODERNMT_SUPPORTED_TASKS = [Task.TRANSLATION]
+
+# Task.TRANSLATION
 
 
 class ModernMTTranslation(ProviderHandler):

@@ -1,14 +1,18 @@
 from typing import List, Optional
 
-from supercontrast.optimizer import Optimizer
-from supercontrast.provider import Provider
-from supercontrast.task.handlers import (
-    OCRHandler,
-    SentimentAnalysisHandler,
-    TranslationHandler,
-)
-from supercontrast.task.handlers.transcription_handler import TranscriptionHandler
+from supercontrast.optimizer.optimizer_enum import Optimizer
+from supercontrast.provider.provider_enum import Provider
+from supercontrast.provider.provider_factory import get_supported_tasks_for_provider
 from supercontrast.task.task_enum import Task
+from supercontrast.task.task_handler import TaskHandler
+
+
+def get_supported_providers_for_task(task: Task) -> List[Provider]:
+    return [
+        provider
+        for provider in Provider
+        if task in get_supported_tasks_for_provider(provider)
+    ]
 
 
 def task_factory(
@@ -17,13 +21,4 @@ def task_factory(
     optimizer: Optional[Optimizer] = None,
     **config,
 ):
-    if task == Task.SENTIMENT_ANALYSIS:
-        return SentimentAnalysisHandler(providers, optimizer, **config)
-    elif task == Task.TRANSLATION:
-        return TranslationHandler(providers, optimizer, **config)
-    elif task == Task.OCR:
-        return OCRHandler(providers, optimizer, **config)
-    elif task == Task.TRANSCRIPTION:
-        return TranscriptionHandler(providers, optimizer, **config)
-    else:
-        raise ValueError(f"Unsupported task: {task}")
+    return TaskHandler(task, providers, optimizer, **config)

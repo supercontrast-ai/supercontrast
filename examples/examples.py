@@ -1,106 +1,98 @@
-from supercontrast.client import supercontrast_client
-from supercontrast.provider import Provider
-from supercontrast.task.task_enum import Task
+from supercontrast import Provider, SuperContrastClient, Task
 from supercontrast.task.types.ocr_types import OCRRequest
 from supercontrast.task.types.sentiment_analysis_types import SentimentAnalysisRequest
 from supercontrast.task.types.transcription_types import TranscriptionRequest
 from supercontrast.task.types.translation_types import TranslationRequest
 
+# Constants
+OCR_IMAGE_URL = "https://jeroen.github.io/images/testocr.png"
+SAMPLE_TEXT = "I love this product!"
+SAMPLE_AUDIO_URL = "https://github.com/voxserv/audio_quality_testing_samples/raw/master/mono_44100/127389__acclivity__thetimehascome.wav"
 
-def print_response(provider, task, input_data, response):
+
+# Print response
+def print_response(provider, task, input_data, response, metadata):
+    """Helper function to print responses in a consistent format."""
     print("-" * 100)
     print(f"{provider} {task} Response:")
-    print(f"Input {'Image' if task == Task.OCR else 'Text'}: {input_data}")
+    print(f"Input {'Image' if task == Task.OCR else 'Text/Audio'}: {input_data}")
     print(f"Response: \n\t{response}")
+    print(f"Metadata: \n\t{metadata}")
     print("-" * 100)
 
 
-# Sending a OCR Request to GCP
-client = supercontrast_client(task=Task.OCR, providers=[Provider.GCP], optimizer=None)
-input_image = "https://jeroen.github.io/images/testocr.png"
-response = client.request(OCRRequest(image=input_image))
-print_response("GCP", Task.OCR, input_image, response)
-
-# Sending a Sentiment Analysis Request to AWS
-client = supercontrast_client(
-    task=Task.SENTIMENT_ANALYSIS, providers=[Provider.AWS], optimizer=None
-)
-input_text = "I love this product!"
-response = client.request(SentimentAnalysisRequest(text=input_text))
-print_response("AWS", Task.SENTIMENT_ANALYSIS, input_text, response)
-
-# Sending a Translation Request to Azure
-client = supercontrast_client(
-    task=Task.TRANSLATION,
-    providers=[Provider.AZURE],
-    optimizer=None,
-    source_language="en",
-    target_language="fr",
-)
-input_text = "I love this product!"
-response = client.request(TranslationRequest(text=input_text))
-print_response("Azure", Task.TRANSLATION, input_text, response)
-
-# Sending a OCR Request to Sentisight
-client = supercontrast_client(
-    task=Task.OCR,
-    providers=[Provider.SENTISIGHT],
-    optimizer=None,
-    language="en",
-)
-input_image = "https://jeroen.github.io/images/testocr.png"
-response = client.request(OCRRequest(image=input_image))
-print_response("Sentisight", Task.OCR, input_image, response)
-
-# Sending a OCR Request to API4AI
-client = supercontrast_client(
-    task=Task.OCR,
-    providers=[Provider.API4AI],
-    optimizer=None,
-    language="en",
-)
-input_image = "https://jeroen.github.io/images/testocr.png"
-response = client.request(OCRRequest(image=input_image))
-print_response("API4AI", Task.OCR, input_image, response)
-
-client = supercontrast_client(
-    task=Task.OCR,
-    providers=[Provider.CLARIFAI],
-    optimizer=None,
-    language="en",
-)
-input_image = "https://jeroen.github.io/images/testocr.png"
-request = OCRRequest(image=input_image)
-response = client.request(request)
-print_response("Clarifai", Task.OCR, input_image, response)
+# OCR Example
+def run_ocr_example():
+    """
+    Demonstrates Optical Character Recognition (OCR) using the GCP provider.
+    This function sends an image URL to the GCP OCR service and retrieves the extracted text.
+    It showcases how to initialize the SuperContrastClient for OCR tasks and handle the response.
+    """
+    print("\nRunning OCR Example with GCP")
+    client = SuperContrastClient(task=Task.OCR, providers=[Provider.GCP])
+    request = OCRRequest(image=OCR_IMAGE_URL)
+    response, metadata = client.request(request)
+    print_response("GCP", Task.OCR, OCR_IMAGE_URL, response, metadata)
 
 
-client = supercontrast_client(
-    task=Task.TRANSLATION,
-    providers=[Provider.MODERNMT],
-    optimizer=None,
-    source_language="en",
-    target_language="fr",
-)
-input_text = "I love this product!"
-response = client.request(TranslationRequest(text=input_text))
-print_response("ModernMT", Task.TRANSLATION, input_text, response)
+# Sentiment Analysis Example
+def run_sentiment_analysis_example():
+    """
+    Demonstrates Sentiment Analysis using the AWS provider.
+    This function sends a sample text to the AWS sentiment analysis service
+    and retrieves the sentiment score. It shows how to set up the SuperContrastClient
+    for sentiment analysis tasks and interpret the results.
+    """
+    print("\nRunning Sentiment Analysis Example with AWS")
+    client = SuperContrastClient(task=Task.SENTIMENT_ANALYSIS, providers=[Provider.AWS])
+    request = SentimentAnalysisRequest(text=SAMPLE_TEXT)
+    response, metadata = client.request(request)
+    print_response("AWS", Task.SENTIMENT_ANALYSIS, SAMPLE_TEXT, response, metadata)
 
-input_audio = "https://github.com/voxserv/audio_quality_testing_samples/raw/master/mono_44100/127389__acclivity__thetimehascome.wav"
 
-client = supercontrast_client(
-    task=Task.TRANSCRIPTION,
-    providers=[Provider.OPENAI],
-    optimizer=None,
-)
+# Translation Example
+def run_translation_example():
+    """
+    Demonstrates Text Translation using the Azure provider.
+    This function translates a sample English text to French using Azure's translation service.
+    It illustrates how to configure the SuperContrastClient for translation tasks,
+    including setting source and target languages.
+    """
+    print("\nRunning Translation Example with Azure")
+    client = SuperContrastClient(
+        task=Task.TRANSLATION,
+        providers=[Provider.AZURE],
+        source_language="en",
+        target_language="fr",
+    )
+    request = TranslationRequest(text=SAMPLE_TEXT)
+    response, metadata = client.request(request)
+    print_response("Azure", Task.TRANSLATION, SAMPLE_TEXT, response, metadata)
 
-response = client.request(TranscriptionRequest(audio_file=input_audio))
-print_response("OpenAI", Task.TRANSCRIPTION, input_audio, response)
 
-client = supercontrast_client(
-    task=Task.TRANSCRIPTION,
-    providers=[Provider.AZURE],
-    optimizer=None,
-)
-response = client.request(TranscriptionRequest(audio_file=input_audio))
-print_response("Azure", Task.TRANSCRIPTION, input_audio, response)
+# Transcription Example
+def run_transcription_example():
+    """
+    Demonstrates Audio Transcription using the OpenAI provider.
+    This function sends an audio file URL to OpenAI's transcription service
+    and retrieves the transcribed text. It demonstrates how to set up the
+    SuperContrastClient for audio transcription tasks and process the results.
+    """
+    print("\nRunning Transcription Example with OpenAI")
+    client = SuperContrastClient(task=Task.TRANSCRIPTION, providers=[Provider.OPENAI])
+    request = TranscriptionRequest(audio_file=SAMPLE_AUDIO_URL)
+    response, metadata = client.request(request)
+    print_response("OpenAI", Task.TRANSCRIPTION, SAMPLE_AUDIO_URL, response, metadata)
+
+
+# Run all examples
+def run_examples():
+    """Run all examples."""
+    run_ocr_example()
+    run_sentiment_analysis_example()
+    run_translation_example()
+    run_transcription_example()
+
+
+if __name__ == "__main__":
+    run_examples()

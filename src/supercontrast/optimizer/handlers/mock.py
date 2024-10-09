@@ -1,5 +1,5 @@
 from supercontrast.optimizer.optimizer_handler import OptimizerHandler
-from supercontrast.provider import Provider
+from supercontrast.provider.provider_enum import Provider
 
 
 class OptimizerMockHandler(OptimizerHandler):

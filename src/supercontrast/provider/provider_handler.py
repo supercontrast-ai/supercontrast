@@ -1,9 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Generic, TypeVar
 
-from supercontrast.metrics import track_latency
-from supercontrast.provider.provider_enum import Provider
-
 # generic types
 
 RequestType = TypeVar("RequestType")
@@ -15,12 +12,6 @@ class ProviderHandler(ABC, Generic[RequestType, ResponseType]):
     def __init__(self, provider, task, *args, **kwargs):
         self.provider = provider
         self.task = task
-
-    def __init_subclass__(cls, **kwargs):
-        super().__init_subclass__(**kwargs)
-
-        # track latency
-        cls.request = track_latency(cls.request)
 
     @abstractmethod
     def request(self, request: RequestType) -> ResponseType:

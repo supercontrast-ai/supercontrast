@@ -12,10 +12,27 @@
     <a href="https://docs.supercontrast.com/" target="_blank">
         <img src="https://img.shields.io/badge/docs-latest-blue.svg" alt="Documentation Status">
     </a>
-
 </h4>
 
-`supercontrast` is a package for easily running models from a variety of providers.
+`supercontrast` is a package for easily running machine learning models from a variety of providers in a unified interface. We're adding more tasks and providers all the time, and would love help from the community to add more!
+
+
+We currently support the following tasks:
+
+- **OCR**
+- **Sentiment Analysis**
+- **Transcription**
+- **Translation**
+
+From some of the most popular providers:
+
+- **AWS**
+- **Azure**
+- **GCP**
+- **OpenAI**
+- **Anthropic**
+- **...and more!**
+
 
 ## Installation
 
@@ -26,15 +43,17 @@ pip install supercontrast
 ## Usage
 
 ```python
-from supercontrast.client import supercontrast_client
-from supercontrast.provider import Provider
-from supercontrast.task.task_enum import Task
-from supercontrast.task.types.sentiment_analysis_types import SentimentAnalysisRequest
+from supercontrast import (
+    Provider,
+    SentimentAnalysisRequest,
+    SuperContrastClient,
+    Task,
+)
 
 # Sending a Sentiment Analysis Request to AWS
-client = supercontrast_client(task=Task.SENTIMENT_ANALYSIS, providers=[Provider.AWS], optimizer=None)
-input_text = "I love this product!"
-response = client.request(SentimentAnalysisRequest(text=input_text))
+client = SuperContrastClient(task=Task.SENTIMENT_ANALYSIS, providers=[Provider.AWS])
+input_text = "I love programming in Python!"
+response, metadata = client.request(SentimentAnalysisRequest(text=input_text))
 ```
 
 For more examples, see the [examples](examples/examples.py) folder.
@@ -65,7 +84,7 @@ isort .
 ### 4. Run tests
 
 ```bash
-pytest
+pytest -k <test_name>
 ```
 
 ### 5. Submit a PR

@@ -9,9 +9,9 @@ from supercontrast import (
 )
 
 # Constants
-OCR_IMAGE_URL = "https://jeroen.github.io/images/testocr.png"
-SAMPLE_TEXT = "I love this product!"
-SAMPLE_AUDIO_URL = "https://github.com/voxserv/audio_quality_testing_samples/raw/master/mono_44100/127389__acclivity__thetimehascome.wav"
+SAMPLE_AUDIO_URL = "https://github.com/supercontrast-ai/supercontrast/raw/main/tests/audio/test_transcription.wav"
+SAMPLE_IMAGE_URL = "https://github.com/supercontrast-ai/supercontrast/raw/main/tests/image/test_ocr.png"
+SAMPLE_TEXT = "I love programming in Python!"
 
 
 # Print response
@@ -34,9 +34,9 @@ def run_ocr_example():
     """
     print("\nRunning OCR Example with GCP")
     client = SuperContrastClient(task=Task.OCR, providers=[Provider.GCP])
-    request = OCRRequest(image=OCR_IMAGE_URL)
+    request = OCRRequest(image=SAMPLE_IMAGE_URL)
     response, metadata = client.request(request)
-    print_response("GCP", Task.OCR, OCR_IMAGE_URL, response, metadata)
+    print_response("GCP", Task.OCR, SAMPLE_IMAGE_URL, response, metadata)
 
 
 # Sentiment Analysis Example

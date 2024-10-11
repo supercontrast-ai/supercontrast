@@ -11,7 +11,7 @@ from supercontrast import (
 
 # constants
 
-TEST_IMAGE_URL = "https://jeroen.github.io/images/testocr.png"
+TEST_IMAGE_URL = "https://github.com/supercontrast-ai/supercontrast/raw/main/tests/image/test_ocr.png"
 REFERENCE_OCR_TEXT = "This is a lot of 12 point text to test the\nocr code and see if it works on all types\nof file format.\nThe quick brown dog jumped over the\nlazy fox. The quick brown dog jumped\nover the lazy fox. The quick brown dog\njumped over the lazy fox. The quick\nbrown dog jumped over the lazy fox."
 
 

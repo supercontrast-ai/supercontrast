@@ -11,7 +11,7 @@ from supercontrast import (
 
 # constants
 
-TEST_AUDIO_URL = "https://github.com/voxserv/audio_quality_testing_samples/raw/master/mono_44100/127389__acclivity__thetimehascome.wav"
+TEST_AUDIO_URL = "https://github.com/supercontrast-ai/supercontrast/raw/main/tests/audio/test_transcription.wav"
 REFERENCE_TRANSCRIPTION = "November 10th, Wednesday, 9:00 PM. I'm standing in a dark alley. After waiting several hours, the time has come. A woman with long dark hair approaches. I have to act, and fast, before she realizes what has happened. I must find out."
 
 # tests

@@ -75,20 +75,25 @@ class TaskHandler(ABC, Generic[RequestType, ResponseType]):
                     task=self.task,
                     provider=provider,
                     latency=latency,
-                    reference=reference,
                 )
 
-                if reference is not None and self.metrics_handler is not None:
-                    metrics_response = self.metrics_handler.calculate_metrics(
-                        reference, response
-                    )
-                    metadata.metrics = metrics_response.metrics
-                    metadata.normalized_reference = (
-                        metrics_response.normalized_reference
-                    )
-                    metadata.normalized_prediction = (
-                        metrics_response.normalized_prediction
-                    )
+                if self.metrics_handler is not None and reference is not None:
+                    try:
+                        metrics_response = self.metrics_handler.calculate_metrics(
+                            reference, response
+                        )
+                        metadata.reference = reference
+                        metadata.metrics = metrics_response.metrics
+                        metadata.normalized_reference = (
+                            metrics_response.normalized_reference
+                        )
+                        metadata.normalized_prediction = (
+                            metrics_response.normalized_prediction
+                        )
+                    except Exception as e:
+                        print(
+                            f"Error calculating metrics for provider {provider}: {str(e)}"
+                        )
 
                 responses[provider] = (response, metadata)
             except Exception as e:

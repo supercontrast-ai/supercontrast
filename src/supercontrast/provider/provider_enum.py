@@ -2,12 +2,12 @@ from enum import Enum
 
 
 class Provider(Enum):
-    ANTHROPIC = "anthropic"
-    API4AI = "api4ai"
-    AWS = "aws"
-    AZURE = "azure"
-    CLARIFAI = "clarifai"
-    GCP = "gcp"
-    MODERNMT = "modernmt"
-    OPENAI = "openai"
-    SENTISIGHT = "sentisight"
+    ANTHROPIC = "ANTHROPIC"
+    API4AI = "API4AI"
+    AWS = "AWS"
+    AZURE = "AZURE"
+    CLARIFAI = "CLARIFAI"
+    GCP = "GCP"
+    MODERNMT = "MODERNMT"
+    OPENAI = "OPENAI"
+    SENTISIGHT = "SENTISIGHT"

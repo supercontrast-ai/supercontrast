@@ -7,6 +7,7 @@ from supercontrast import (
     SuperContrastClient,
     Task,
     TaskMetadata,
+    get_supported_providers_for_task,
 )
 
 # constants
@@ -153,15 +154,7 @@ def test_ocr_sentisight():
 
 def test_ocr_evaluate():
     ocr_client = SuperContrastClient(
-        task=Task.OCR,
-        providers=[
-            Provider.API4AI,
-            Provider.AWS,
-            Provider.AZURE,
-            Provider.CLARIFAI,
-            Provider.GCP,
-            Provider.SENTISIGHT,
-        ],
+        task=Task.OCR, providers=get_supported_providers_for_task(Task.OCR)
     )
     request = OCRRequest(image=TEST_IMAGE_URL)
     reference_response = OCRResponse(all_text=REFERENCE_OCR_TEXT, bounding_boxes=[])

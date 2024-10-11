@@ -7,6 +7,7 @@ from supercontrast import (
     TaskMetadata,
     TranslationRequest,
     TranslationResponse,
+    get_supported_providers_for_task,
 )
 
 # constants
@@ -190,14 +191,7 @@ def test_translate_openai():
 def test_translate_evaluate():
     translate_client = SuperContrastClient(
         task=Task.TRANSLATION,
-        providers=[
-            Provider.ANTHROPIC,
-            Provider.MODERNMT,
-            Provider.OPENAI,
-            Provider.AZURE,
-            Provider.GCP,
-            Provider.AWS,
-        ],
+        providers=get_supported_providers_for_task(Task.TRANSLATION),
         source_language="en",
         target_language="es",
     )

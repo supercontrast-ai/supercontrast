@@ -7,6 +7,7 @@ from supercontrast import (
     SuperContrastClient,
     Task,
     TaskMetadata,
+    get_supported_providers_for_task,
 )
 
 # constants
@@ -133,13 +134,7 @@ def test_sentiment_analysis_openai():
 def test_sentiment_analysis_evaluate():
     sentiment_analysis_client = SuperContrastClient(
         task=Task.SENTIMENT_ANALYSIS,
-        providers=[
-            Provider.ANTHROPIC,
-            Provider.AWS,
-            Provider.AZURE,
-            Provider.GCP,
-            Provider.OPENAI,
-        ],
+        providers=get_supported_providers_for_task(Task.SENTIMENT_ANALYSIS),
     )
     request = SentimentAnalysisRequest(text=TEST_TEXT)
     responses = sentiment_analysis_client.evaluate(request)

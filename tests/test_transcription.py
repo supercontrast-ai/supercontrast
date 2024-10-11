@@ -7,6 +7,7 @@ from supercontrast import (
     TaskMetadata,
     TranscriptionRequest,
     TranscriptionResponse,
+    get_supported_providers_for_task,
 )
 
 # constants
@@ -69,11 +70,7 @@ def test_transcription_openai():
 def test_transcription_evaluate():
     transcription_client = SuperContrastClient(
         task=Task.TRANSCRIPTION,
-        providers=[
-            Provider.AZURE,
-            Provider.OPENAI,
-            # Add other providers here if available for transcription
-        ],
+        providers=get_supported_providers_for_task(Task.TRANSCRIPTION),
     )
     request = TranscriptionRequest(audio_file=TEST_AUDIO_URL)
     reference_response = TranscriptionResponse(text=REFERENCE_TRANSCRIPTION)

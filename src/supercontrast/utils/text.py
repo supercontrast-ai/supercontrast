@@ -15,7 +15,10 @@ def normalize_text(text: str, task: str = "transcription") -> str:
     text = text.lower()
 
     # Unicode normalization (convert to standard form)
-    text = unicodedata.normalize("NFKC", text)
+    text = unicodedata.normalize("NFKD", text)
+
+    # Remove diacritical marks
+    text = "".join(c for c in text if not unicodedata.combining(c))
 
     # Replace numbers with their word equivalents
     def replace_number(match):
@@ -33,21 +36,4 @@ def normalize_text(text: str, task: str = "transcription") -> str:
     # Normalize whitespace
     text = " ".join(text.split())
 
-    if task == "translation":
-        # Additional normalization steps for translation
-        # (e.g., handling of diacritics might differ)
-        pass
-
     return text
-
-
-def language_name_to_code(language_name: str) -> str:
-    """Convert language name to ISO 639-1 code."""
-    language_map = {
-        "English": "en",
-        "Spanish": "es",
-        "French": "fr",
-        "German": "de",
-        "Italian": "it",
-    }
-    return language_map.get(language_name, "en")  # Default to English if not found

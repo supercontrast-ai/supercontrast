@@ -1,8 +1,12 @@
-from supercontrast import Provider, SuperContrastClient, Task
-from supercontrast.task.types.ocr_types import OCRRequest
-from supercontrast.task.types.sentiment_analysis_types import SentimentAnalysisRequest
-from supercontrast.task.types.transcription_types import TranscriptionRequest
-from supercontrast.task.types.translation_types import TranslationRequest
+from supercontrast import (
+    OCRRequest,
+    Provider,
+    SentimentAnalysisRequest,
+    SuperContrastClient,
+    Task,
+    TranscriptionRequest,
+    TranslationRequest,
+)
 
 # Constants
 OCR_IMAGE_URL = "https://jeroen.github.io/images/testocr.png"

@@ -1,2 +1,0 @@
-from supercontrast.metrics.metrics_factory import metrics_factory
-from supercontrast.metrics.metrics_handler import MetricsHandler

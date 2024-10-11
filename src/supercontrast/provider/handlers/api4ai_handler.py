@@ -123,7 +123,9 @@ class API4AIOCR(ProviderHandler):
 
 
 def api4ai_provider_factory(task: Task, **config) -> ProviderHandler:
-    if task == Task.OCR:
+    if task not in API4AI_SUPPORTED_TASKS:
+        raise ValueError(f"Unsupported task: {task}")
+    elif task == Task.OCR:
         return API4AIOCR.init_from_env()
     else:
         raise ValueError(f"Unsupported task: {task}")

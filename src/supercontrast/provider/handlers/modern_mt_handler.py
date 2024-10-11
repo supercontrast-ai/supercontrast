@@ -83,7 +83,9 @@ class ModernMTException(Exception):
 
 
 def modernmt_provider_factory(task: Task, **config) -> ProviderHandler:
-    if task == Task.TRANSLATION:
+    if task not in MODERNMT_SUPPORTED_TASKS:
+        raise ValueError(f"Unsupported task: {task}")
+    elif task == Task.TRANSLATION:
         source_language = config.get("source_language", "en")
         target_language = config.get("target_language", "es")
         return ModernMTTranslation.init_from_env(

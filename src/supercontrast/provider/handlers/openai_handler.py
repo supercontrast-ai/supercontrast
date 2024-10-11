@@ -34,9 +34,9 @@ from supercontrast.utils.text import truncate_text
 
 OPENAI_MODEL_NAME = "gpt-4o"
 OPENAI_SUPPORTED_TASKS = [
+    # Task.OCR, # TODO: Add back in when request is fixed
     Task.SENTIMENT_ANALYSIS,
     Task.TRANSLATION,
-    Task.OCR,
     Task.TRANSCRIPTION,
 ]
 # Task.SENTIMENT_ANALYSIS
@@ -236,7 +236,9 @@ class OpenAITranscription(ProviderHandler):
 
 
 def openai_provider_factory(task: Task, **config) -> ProviderHandler:
-    if task == Task.SENTIMENT_ANALYSIS:
+    if task not in OPENAI_SUPPORTED_TASKS:
+        raise ValueError(f"Unsupported task: {task}")
+    elif task == Task.SENTIMENT_ANALYSIS:
         return OpenAISentimentAnalysis.init_from_env()
     elif task == Task.TRANSLATION:
         source_language = config.get("source_language", "en")

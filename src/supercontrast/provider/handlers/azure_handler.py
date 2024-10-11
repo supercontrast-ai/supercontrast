@@ -242,7 +242,9 @@ class AzureTranscription(ProviderHandler):
 
 
 def azure_provider_factory(task: Task, **config) -> ProviderHandler:
-    if task == Task.SENTIMENT_ANALYSIS:
+    if task not in AZURE_SUPPORTED_TASKS:
+        raise ValueError(f"Unsupported task: {task}")
+    elif task == Task.SENTIMENT_ANALYSIS:
         endpoint = config.get("azure_text_analytics_endpoint")
         key = config.get("azure_text_analytics_key")
         return AzureSentimentAnalysis.init_from_env(endpoint=endpoint, key=key)

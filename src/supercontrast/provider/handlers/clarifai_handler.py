@@ -14,7 +14,9 @@ from supercontrast.utils.image import get_image_size, load_image_data
 
 # Constants
 
-CLARIFAI_SUPPORTED_TASKS = [Task.OCR]
+CLARIFAI_SUPPORTED_TASKS = [
+    # Task.OCR, # TODO: Add back in when request is fixed
+]
 
 # Task.OCR
 
@@ -169,7 +171,9 @@ def clarifai_provider_factory(task: Task, **config) -> ProviderHandler:
     if api_key is None:
         raise ValueError("CLARIFAI_API_KEY is not set")
 
-    if task == Task.OCR:
+    if task not in CLARIFAI_SUPPORTED_TASKS:
+        raise ValueError(f"Unsupported task: {task}")
+    elif task == Task.OCR:
         return ClarifaiOCR.init_from_env(api_key)
     else:
         raise ValueError(f"Unsupported task: {task}")

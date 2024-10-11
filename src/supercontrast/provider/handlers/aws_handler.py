@@ -185,7 +185,9 @@ def aws_provider_factory(task: Task, **config) -> ProviderHandler:
     aws_secret_access_key = config.get("aws_secret_access_key")
     aws_session_token = config.get("aws_session_token")
 
-    if task == Task.SENTIMENT_ANALYSIS:
+    if task not in AWS_SUPPORTED_TASKS:
+        raise ValueError(f"Unsupported task: {task}")
+    elif task == Task.SENTIMENT_ANALYSIS:
         return AWSSentimentAnalysis.init_from_env(
             aws_access_key_id, aws_secret_access_key, aws_session_token
         )

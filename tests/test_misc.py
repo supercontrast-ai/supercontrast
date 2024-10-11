@@ -11,9 +11,7 @@ def test_get_supported_providers_for_task():
         Provider.API4AI,
         Provider.AWS,
         Provider.AZURE,
-        Provider.CLARIFAI,
         Provider.GCP,
-        Provider.OPENAI,
         Provider.SENTISIGHT,
     }
     assert set(get_supported_providers_for_task(Task.SENTIMENT_ANALYSIS)) == {
@@ -54,7 +52,7 @@ def test_get_supported_tasks_for_provider():
         Task.TRANSCRIPTION,
         Task.TRANSLATION,
     }
-    assert set(get_supported_tasks_for_provider(Provider.CLARIFAI)) == {Task.OCR}
+    # assert set(get_supported_tasks_for_provider(Provider.CLARIFAI)) == {}
     assert set(get_supported_tasks_for_provider(Provider.GCP)) == {
         Task.OCR,
         Task.SENTIMENT_ANALYSIS,
@@ -64,7 +62,6 @@ def test_get_supported_tasks_for_provider():
         Task.TRANSLATION
     }
     assert set(get_supported_tasks_for_provider(Provider.OPENAI)) == {
-        Task.OCR,
         Task.SENTIMENT_ANALYSIS,
         Task.TRANSCRIPTION,
         Task.TRANSLATION,

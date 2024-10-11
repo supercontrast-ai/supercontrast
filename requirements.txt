@@ -1,48 +1,46 @@
 # Core
-pydantic
-pillow
+pydantic==2.9.2
+pillow==10.4.0
 
 # Linter
-black
-isort
+black==24.10.0
+isort==5.13.2
 
 # Testing
-pytest
+pytest==8.3.3
 
 # Metrics
-jiwer
-nltk
-num2words
-sacrebleu
+jiwer==3.0.4
+nltk==3.9.1
+num2words==0.5.13
+sacrebleu==2.4.3
 
 # Langchain
-langchain
-langchain_anthropic
-langchain_openai
+langchain==0.3.3
+langchain_anthropic==0.2.3
+langchain_openai==0.2.2
 
 # Amazon Web Services
-boto3
+boto3==1.35.38
 
 # Google Cloud
-google-api-python-client
-google-auth-oauthlib
-google-auth-httplib2
-google-auth
-google-api-core
-google-cloud-vision
-google-cloud-translate
-google-cloud-speech
-google-cloud-language
-google-cloud-translate
-google-cloud-vision
+google-api-python-client==2.149.0
+google-auth-oauthlib==1.2.1
+google-auth-httplib2==0.2.0
+google-auth==2.35.0
+google-api-core==2.21.0
+google-cloud-vision==3.7.4
+google-cloud-translate==3.16.0
+google-cloud-speech==2.27.0
+google-cloud-language==2.14.0
 
 # Microsoft Azure
-msrest
-azure-ai-textanalytics
-azure-cognitiveservices-vision-computervision
-azure-ai-translation-text
-azure-core
-azure-cognitiveservices-speech
+msrest==0.7.1
+azure-ai-textanalytics==5.3.0
+azure-cognitiveservices-vision-computervision==0.9.0
+azure-ai-translation-text==1.0.1
+azure-core==1.31.0
+azure-cognitiveservices-speech==1.41.1
 
 # OpenAI
-openai
+openai==1.51.2

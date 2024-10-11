@@ -40,6 +40,12 @@ From some of the most popular providers:
 pip install supercontrast
 ```
 
+**NOTE:** `supercontrast` is supported on Python 3.12, it may be unstable on other versions. If you have conda installed, you can create an environment with the required packages using the `environment.yml` file:
+
+```bash
+conda env create -f environment.yml
+```
+
 ## Usage
 
 ```python
@@ -56,7 +62,7 @@ input_text = "I love programming in Python!"
 response, metadata = client.request(SentimentAnalysisRequest(text=input_text))
 ```
 
-For more examples, see the [examples](examples/examples.py) folder.
+For more examples of how to use `supercontrast`, refer to [examples.py](examples/examples.py) in the [examples](examples/) folder.
 
 ## Contributing
 

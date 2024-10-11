@@ -91,7 +91,9 @@ class SentisightOCR(ProviderHandler):
 
 
 def sentisight_provider_factory(task: Task, **config) -> ProviderHandler:
-    if task == Task.OCR:
+    if task not in SENTISIGHT_SUPPORTED_TASKS:
+        raise ValueError(f"Unsupported task: {task}")
+    elif task == Task.OCR:
         language = config.get("language", "en")
         return SentisightOCR.init_from_env(language=language)
     else:

@@ -11,7 +11,7 @@ setup(
     install_requires=required,
     author="supercontrast",
     author_email="shravan@supercontrast.com",
-    description="supercontrast is a package for simplifying the use of multiple AI APIs",
+    description="supercontrast is a package for unifying machine learning models across providers",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     url="https://github.com/supercontrast-ai/supercontrast",

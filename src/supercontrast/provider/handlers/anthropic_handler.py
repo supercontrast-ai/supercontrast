@@ -133,7 +133,9 @@ class AnthropicTranslate(ProviderHandler):
 
 
 def anthropic_provider_factory(task: Task, **config) -> ProviderHandler:
-    if task == Task.SENTIMENT_ANALYSIS:
+    if task not in ANTHROPIC_SUPPORTED_TASKS:
+        raise ValueError(f"Unsupported task: {task}")
+    elif task == Task.SENTIMENT_ANALYSIS:
         return AnthropicSentimentAnalysis.init_from_env()
     elif task == Task.TRANSLATION:
         source_language = config.get("source_language", "en")

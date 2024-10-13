@@ -6,7 +6,7 @@
     <a href="https://www.ycombinator.com/companies/supercontrast">
         <img src="https://img.shields.io/badge/Y%20Combinator-F24-orange?style=flat-square" alt="Y Combinator F24">
     </a>
-    <a href="https://discord.gg/R9TSAc23">
+    <a href="https://discord.com/invite/YWsdNpgT">
         <img src="https://img.shields.io/static/v1?label=Chat%20on&message=Discord&color=blue&logo=Discord&style=flat-square" alt="Discord">
     </a>
     <a href="https://docs.supercontrast.com/" target="_blank">

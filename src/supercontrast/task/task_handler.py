@@ -1,6 +1,7 @@
 import time
 
 from abc import ABC
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Dict, Generic, List, Optional, Tuple, TypeVar
 
 from supercontrast.metrics.metrics_factory import metrics_factory
@@ -65,7 +66,8 @@ class TaskHandler(ABC, Generic[RequestType, ResponseType]):
         self, body: RequestType, reference: Optional[ResponseType] = None
     ) -> Dict[Provider, Tuple[ResponseType, TaskMetadata]]:
         responses = {}
-        for provider, handler in self.provider_handler_map.items():
+
+        def evaluate_provider(provider, handler):
             try:
                 start_time = time.time()
                 response = handler.request(body)
@@ -95,8 +97,20 @@ class TaskHandler(ABC, Generic[RequestType, ResponseType]):
                             f"Error calculating metrics for provider {provider}: {str(e)}"
                         )
 
-                responses[provider] = (response, metadata)
+                return provider, (response, metadata)
             except Exception as e:
-                # Log the error or handle it as appropriate for your use case
                 print(f"Error evaluating provider {provider}: {str(e)}")
+                return provider, None
+
+        with ThreadPoolExecutor() as executor:
+            futures = [
+                executor.submit(evaluate_provider, provider, handler)
+                for provider, handler in self.provider_handler_map.items()
+            ]
+
+            for future in as_completed(futures):
+                provider, result = future.result()
+                if result is not None:
+                    responses[provider] = result
+
         return responses

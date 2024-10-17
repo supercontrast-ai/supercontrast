@@ -74,10 +74,10 @@ We welcome contributions to the project! To contribute, please follow these step
 git clone https://github.com/supercontrast/supercontrast.git
 ```
 
-### 2. Install package
+### 2. Install package in editable mode
 
 ```bash
-pip install -e .[dev]
+pip install -e .
 ```
 
 ### 3. Run linting

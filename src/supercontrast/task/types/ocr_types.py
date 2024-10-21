@@ -5,17 +5,18 @@ from typing import List, Optional, Tuple, Union
 
 
 class OCRRequest(BaseModel):
-    image_path: Optional[str] = None
-    image_data: Optional[bytes] = None
-    pdf_path: Optional[str] = None
-    pdf_data: Optional[bytes] = None
+    image: Union[str, bytes]
 
-    @field_validator('image_path', 'image_data', 'pdf_path', 'pdf_data', always=True)
-    def check_image_or_pdf(cls, v, values):
-        if not any([values.get('image_path'), values.get('image_data'),
-                    values.get('pdf_path'), values.get('pdf_data')]):
-            raise ValueError('Either image or pdf must be provided')
-        return v
+    # TODO(fix typing):
+    # image_path: Optional[str] = None
+    # image_data: Optional[bytes] = None
+
+    # @field_validator('image_path', 'image_data')
+    # @classmethod
+    # def check_image_or_pdf(cls, v, info):
+    #     if not any([info.data.get('image_path'), info.data.get('image_data')]):
+    #         raise ValueError('Either image_path or image_data must be provided')
+    #     return v
 
 
 # Response

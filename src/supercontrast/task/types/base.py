@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import Generic, List, TypeVar
 from pydantic import BaseModel
+from typing import Generic, List, TypeVar
 
-T = TypeVar('T', bound='TaskResponse')
+T = TypeVar("T", bound="TaskResponse")
+
 
 class TaskResponse(BaseModel, ABC, Generic[T]):
 

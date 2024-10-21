@@ -7,6 +7,10 @@ from supercontrast.task.task_enum import Task
 from supercontrast.task.task_factory import get_supported_providers_for_task
 from supercontrast.task.task_handler import TaskHandler
 from supercontrast.task.task_metadata import TaskMetadata
+from supercontrast.task.types.document_reconstruction_types import (
+    DocumentReconstructionRequest,
+    DocumentReconstructionResponse,
+)
 from supercontrast.task.types.ocr_types import OCRRequest, OCRResponse
 from supercontrast.task.types.sentiment_analysis_types import (
     SentimentAnalysisRequest,

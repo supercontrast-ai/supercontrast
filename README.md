@@ -17,14 +17,15 @@
 `supercontrast` is a package for easily running machine learning models from a variety of providers in a unified interface. We're adding more tasks and providers all the time, and would love help from the community to add more!
 
 
-We currently support the following tasks:
+We currently support the following **Tasks**:
 
 - **OCR**
 - **Sentiment Analysis**
 - **Transcription**
 - **Translation**
+- **...and more!**
 
-From some of the most popular providers:
+From some of the most popular **Providers**:
 
 - **AWS**
 - **Azure**
@@ -33,17 +34,32 @@ From some of the most popular providers:
 - **Anthropic**
 - **...and more!**
 
+If you want the full list of supported tasks and providers, please reference our [docs](https://docs.supercontrast.com/introduction).
 
 ## Installation
+
+### pip
 
 ```bash
 pip install supercontrast
 ```
 
-**NOTE:** `supercontrast` is supported on Python 3.12, it may be unstable on other versions. If you have conda installed, you can create an environment with the required packages using the `environment.yml` file:
+### conda
 
 ```bash
 conda env create -f environment.yml
+```
+
+## Additional Requirements
+
+### Python Version
+`supercontrast` is supported on **Python 3.12** (other versions may be unstable)
+
+### PDF Processing
+If you are processing pdfs, you will need to install `poppler`. We recommend using conda to install it:
+
+```bash
+conda install -c conda-forge poppler
 ```
 
 ## Usage
@@ -74,10 +90,10 @@ We welcome contributions to the project! To contribute, please follow these step
 git clone https://github.com/supercontrast/supercontrast.git
 ```
 
-### 2. Install package
+### 2. Install package in editable mode
 
 ```bash
-pip install -e .[dev]
+pip install -e .
 ```
 
 ### 3. Run linting

@@ -1,4 +1,5 @@
 from supercontrast import (
+    DocumentReconstructionRequest,
     OCRRequest,
     Provider,
     SentimentAnalysisRequest,
@@ -11,18 +12,32 @@ from supercontrast import (
 # Constants
 SAMPLE_AUDIO_URL = "https://github.com/supercontrast-ai/supercontrast/raw/main/tests/audio/test_transcription.wav"
 SAMPLE_IMAGE_URL = "https://github.com/supercontrast-ai/supercontrast/raw/main/tests/image/test_ocr.png"
+SAMPLE_PDF_URL = "https://omni-demo-data.s3.amazonaws.com/test/cs101.pdf"
 SAMPLE_TEXT = "I love programming in Python!"
 
 
 # Print response
-def print_response(provider, task, input_data, response, metadata):
+def print_response(input_data, response, metadata):
     """Helper function to print responses in a consistent format."""
     print("-" * 100)
-    print(f"{provider} {task} Response:")
-    print(f"Input {'Image' if task == Task.OCR else 'Text/Audio'}: {input_data}")
-    print(f"Response: \n\t{response}")
-    print(f"Metadata: \n\t{metadata}")
+    print(f"Input: {input_data}")
+    print(f"{metadata}")
+    print(f"Response: \n{response}\n")
     print("-" * 100)
+
+
+# Document Reconstruction Example
+def run_document_reconstruction_example():
+    """
+    Demonstrates Document Reconstruction using the OmniAI provider.
+    """
+    print("\nRunning Document Reconstruction Example with OmniAI")
+    client = SuperContrastClient(
+        task=Task.DOCUMENT_RECONSTRUCTION, providers=[Provider.OMNIAI]
+    )
+    request = DocumentReconstructionRequest(input_file=SAMPLE_PDF_URL)
+    response, metadata = client.request(request)
+    print_response(SAMPLE_PDF_URL, response, metadata)
 
 
 # OCR Example
@@ -36,7 +51,7 @@ def run_ocr_example():
     client = SuperContrastClient(task=Task.OCR, providers=[Provider.GCP])
     request = OCRRequest(image=SAMPLE_IMAGE_URL)
     response, metadata = client.request(request)
-    print_response("GCP", Task.OCR, SAMPLE_IMAGE_URL, response, metadata)
+    print_response(SAMPLE_IMAGE_URL, response, metadata)
 
 
 # Sentiment Analysis Example
@@ -51,7 +66,22 @@ def run_sentiment_analysis_example():
     client = SuperContrastClient(task=Task.SENTIMENT_ANALYSIS, providers=[Provider.AWS])
     request = SentimentAnalysisRequest(text=SAMPLE_TEXT)
     response, metadata = client.request(request)
-    print_response("AWS", Task.SENTIMENT_ANALYSIS, SAMPLE_TEXT, response, metadata)
+    print_response(SAMPLE_TEXT, response, metadata)
+
+
+# Transcription Example
+def run_transcription_example():
+    """
+    Demonstrates Audio Transcription using the OpenAI provider.
+    This function sends an audio file URL to OpenAI's transcription service
+    and retrieves the transcribed text. It demonstrates how to set up the
+    SuperContrastClient for audio transcription tasks and process the results.
+    """
+    print("\nRunning Transcription Example with OpenAI")
+    client = SuperContrastClient(task=Task.TRANSCRIPTION, providers=[Provider.OPENAI])
+    request = TranscriptionRequest(audio_file=SAMPLE_AUDIO_URL)
+    response, metadata = client.request(request)
+    print_response(SAMPLE_AUDIO_URL, response, metadata)
 
 
 # Translation Example
@@ -71,32 +101,13 @@ def run_translation_example():
     )
     request = TranslationRequest(text=SAMPLE_TEXT)
     response, metadata = client.request(request)
-    print_response("Azure", Task.TRANSLATION, SAMPLE_TEXT, response, metadata)
-
-
-# Transcription Example
-def run_transcription_example():
-    """
-    Demonstrates Audio Transcription using the OpenAI provider.
-    This function sends an audio file URL to OpenAI's transcription service
-    and retrieves the transcribed text. It demonstrates how to set up the
-    SuperContrastClient for audio transcription tasks and process the results.
-    """
-    print("\nRunning Transcription Example with OpenAI")
-    client = SuperContrastClient(task=Task.TRANSCRIPTION, providers=[Provider.OPENAI])
-    request = TranscriptionRequest(audio_file=SAMPLE_AUDIO_URL)
-    response, metadata = client.request(request)
-    print_response("OpenAI", Task.TRANSCRIPTION, SAMPLE_AUDIO_URL, response, metadata)
+    print_response(SAMPLE_TEXT, response, metadata)
 
 
 # Run all examples
-def run_examples():
-    """Run all examples."""
-    run_ocr_example()
-    run_sentiment_analysis_example()
-    run_translation_example()
-    run_transcription_example()
-
-
 if __name__ == "__main__":
-    run_examples()
+    run_document_reconstruction_example()
+    # run_ocr_example()
+    # run_sentiment_analysis_example()
+    # run_transcription_example()
+    # run_translation_example()

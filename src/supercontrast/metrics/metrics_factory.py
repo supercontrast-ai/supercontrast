@@ -17,7 +17,5 @@ def metrics_factory(task: Task) -> Optional[MetricsHandler]:
         return TranscriptionMetricsHandler()
     elif task == Task.TRANSLATION:
         return TranslationMetricsHandler()
-    elif task == Task.SENTIMENT_ANALYSIS:
-        return None
     else:
-        raise ValueError(f"Unsupported task: {task}")
+        return None

@@ -11,3 +11,4 @@ class Provider(Enum):
     MODERNMT = "MODERNMT"
     OPENAI = "OPENAI"
     SENTISIGHT = "SENTISIGHT"
+    OMNIAI = "OMNIAI"

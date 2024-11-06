@@ -82,42 +82,4 @@ For more examples of how to use `supercontrast`, refer to [examples.py](examples
 
 ## Contributing
 
-We welcome contributions to the project! To contribute, please follow these steps:
-
-### 1. Clone the repo
-
-```bash
-git clone https://github.com/supercontrast/supercontrast.git
-```
-
-### 2. Install package in editable mode
-
-```bash
-pip install -e .
-```
-
-### 3. Run linting
-
-```bash
-black .
-isort .
-```
-
-### 4. Run tests
-
-```bash
-pytest -k <test_name>
-```
-
-### 5. Submit a PR
-
-Submit a PR to the main branch! We will review and merge your PR.
-
-
-
-
-
-
-
-
-
+Contributions to supercontrast are welcome. Please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file for detailed guidelines.

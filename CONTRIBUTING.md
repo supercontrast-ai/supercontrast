@@ -1,6 +1,6 @@
 # Contributing
 
-We welcome contributions to the Supercontrast project!To get started, please follow these steps:
+We welcome contributions to the Supercontrast project! To get started, please follow these steps:
 
 ### 1. Fork the Repository
 

@@ -1,6 +1,6 @@
 # Contributing
 
-We welcome contributions to the supercontrast! To get started, please follow these steps:
+We welcome contributions to the Supercontrast project!To get started, please follow these steps:
 
 ### 1. Fork the Repository
 
@@ -16,7 +16,6 @@ Navigate to the project directory and install the package in development mode:
 ``` 
 cd supercontrast
 pip install -e .[dev]
-
 ```
 
 ### 3. Make Your Changes
@@ -24,7 +23,6 @@ Create a new branch to make your changes. Use a descriptive name for your branch
 
 ```
 git checkout -b feature/add-new-feature
-
 ```
 
 ### 4. Run Linting
@@ -60,7 +58,6 @@ Go to the original repository on GitHub and submit a pull request from your bran
 
 ```
 gh pr create --title "Add new feature: description" --body "Detailed description of the changes."
-
 ```
 ### Issue Reporting
 
